@@ -60,7 +60,7 @@ namespace CoverMate.Pages
                 var googleClaims_name = googleClaims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
                 //username = googleClaims_email.Split("@")[0];
 
-                googleClaims_email = "adomingo@school.edu.ph";
+                googleClaims_email = "asantos@school.edu.ph";
                 var parameters = new
                 {
                     Email = googleClaims_email
@@ -85,7 +85,7 @@ namespace CoverMate.Pages
                         {
                             case "admin":
                                 claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-                                redirectPage = "/Approval";
+                                redirectPage = "/AllRequests";
                                 break;
 
                             case "teacher":
@@ -117,7 +117,7 @@ namespace CoverMate.Pages
             {
                 if (role == "Admin")
                 {
-                    redirectPage = "/Approval";
+                    redirectPage = "/AllRequests";
                 }
                 else
                 {
