@@ -55,13 +55,23 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
+
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseCookiePolicy(); // new
 app.UseSession();
 
 app.UseRouting();
 
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
