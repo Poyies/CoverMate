@@ -83,13 +83,8 @@ namespace CoverMate.Pages
                     {
                         switch (roleType.ToLower())
                         {
-                            case "admin/assignee":
+                            case "admin":
                                 claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-                                redirectPage = "/Approval";
-                                break;
-
-                            case "approver":
-                                claims.Add(new Claim(ClaimTypes.Role, "Approver"));
                                 redirectPage = "/Approval";
                                 break;
 
@@ -117,32 +112,12 @@ namespace CoverMate.Pages
                 {
                     return "/Account/Logout";
                 }
-
-                //redirectPage = "/MyRequests";
-
-                //var claims = new List<Claim> {
-                //        new Claim(ClaimTypes.Name, "Teacher Name"),
-                //        new Claim(ClaimTypes.Email,  "doej@ismanila.org"),
-                //        new Claim("Userno", "902979"),
-                //        new Claim("Username", "doej"),
-                //};
-
-                //claims.Add(new Claim(ClaimTypes.Role, "Requestor"));
-
-                //var claimsIdentity = new ClaimsIdentity(claims, GoogleDefaults.AuthenticationScheme);
-                //var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-                //await HttpContext.SignInAsync(claimsPrincipal, new AuthenticationProperties
-                //{
-                //    IsPersistent = true,
-                //});
-
-
             }
             else
             {
-                if (role == "Approver")
+                if (role == "Admin")
                 {
-                    redirectPage = "/AllRequests";
+                    redirectPage = "/Approval";
                 }
                 else
                 {

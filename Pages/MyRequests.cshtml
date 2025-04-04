@@ -12,25 +12,28 @@
      }
 
      .block {
-          height: 25px;
-          width: 25px;
+          height: 20px;
+          width: 20px;
           color: white;
           display: flex;
           justify-content: center;
           align-items: center;
           border-radius: 1rem;
-          font-size: 1rem;
+          font-size: 14px;
+          font-weight: 500;
      }
 </style>
 
 <div class="d-flex justify-content-between">
      <h4 class="fw-bold">My Requests</h4>
      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalForm">
-          New Sub Request
+          Request for Sub
      </button>
 </div>
 <br />
-<div class="row">
+
+<div id="RequestList"></div>
+@*<div class="row">
      <div class="col-12">
           <h6>March 25, 2025</h6>
           <div class="accordion" id="accordionExample">
@@ -55,12 +58,12 @@
                </ul>
           </div>
      </div>
-</div>
+</div>*@
 
 
 
 <div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true">
-     <div class="modal-dialog modal-lg">
+     <div class="modal-dialog" style="max-width:650px">
           <div class="modal-content">
                <div class="modal-header">
                     <h5 class="modal-title" id="modalFormLabel">Sub Request Details</h5>
@@ -70,7 +73,7 @@
                     <form class="d-flex flex-column gap-2">
                          <div class="row align-items-start">
                               <div class="col-3">
-                                   <label for="txtDate" class="col-form-label">Date</label>
+                                   <label for="txtDate" class="col-form-label">Date Needed</label>
                               </div>
                               <div class="col-9">
                                    <input id="txtDate" type="date" class="form-control">
@@ -89,7 +92,7 @@
                                    <label for="chkBlock" class="col-form-label">Block</label>
                               </div>
                               <div class="col-9">
-                                   <div id="blockList" class="d-flex flex-column gap-1"></div>
+                                   <div id="blockList" class="d-flex flex-column gap-1 p-3 bg-light rounded-3"></div>
                               </div>
                          </div>
                     </form>
@@ -101,7 +104,7 @@
                     </div>
                     <div>
                          <button type="button" class="btn" data-bs-dismiss="modal">Close</button>
-                         <button type="submit" class="btn btn-primary">Submit Request</button>
+                         <button type="submit" class="btn btn-primary" id="btnSubmit" disabled>Submit</button>
                     </div>
                </div>
           </div>
@@ -112,63 +115,169 @@
 @section Scripts{
 
      <script>
-          // Master block array with schedule
-          const blocks = [
-               { id: "blockA", label: "Block A", schedule: "7:30 - 8:40" },
-               { id: "blockB", label: "Block B", schedule: "9:00 - 10:10" },
-               { id: "blockC", label: "Block C", schedule: "10:15 - 11:25" },
-               { id: "blockD", label: "Block D", schedule: "12:05 - 1:15" },
-               { id: "blockE", label: "Block E", schedule: "1:20 - 2:30" },
-               { id: "blockF", label: "Block F", schedule: "7:30- 8:40" },
-               { id: "blockG", label: "Block G", schedule: "9:00 - 10:10" },
-               { id: "blockH", label: "Block H", schedule: "10:15 - 11:25" },
-               { id: "advisory", label: "Advisory", schedule: "10:55 - 11:35" },
-               { id: "hr", label: "HR", schedule: "" },
-               { id: "lunchDuty", label: "Lunch Duty", schedule: "" }
-          ]
+          jQuery(function () {               
+               GetListofRequest()
 
-          jQuery(function () {
-               getBlock()
+               // When the consent checkbox is changed
+               $('#termsCheck').on('change', updateSubmitButtonState)
+
+               // When any block is checked/unchecked
+               $('#blockList').on('change', '.block-check', updateSubmitButtonState)
+
+               $('#modalForm').on('show.bs.modal', function (e) {
+                    var modal = $(this)
+                    var button = $(e.relatedTarget)
+
+                    const today = new Date().toISOString().split('T')[0]
+                    modal.find('#txtDate').val(today);
+                    modal.find('#txtDate').attr('min', today);
+
+                    GetBlockList()
+               }).on('hidden.bs.modal', function (e) {
+                    var modal = $(this)
+
+                    $(modal).find('#blockList').empty()
+                    $(modal).find('#termsCheck').prop('checked', false)
+                    $(modal).find('#btnSubmit').prop('disabled', true)
+                    $(modal).find('.block-check').prop('checked', false)
+               })
+
           })
+          
 
-          function getBlock() {
-               // Filter blocks to only show the ones you want in the modal
-               const displayBlocks = [
-                    { id: "blockA", label: "Explore Computer Science Block A" },
-                    { id: "blockC", label: "Explore Computer Hardware Block C" },
-                    { id: "blockD", label: "Explore Computer Software Block D" }
-               ]
-
+          function GetBlockList() {
                const $blockList = $('#blockList')
+               $blockList.empty() // Clear old content
 
-               displayBlocks.forEach(block => {
-                    const fullBlock = blocks.find(b => b.id === block.id) // match from master list
-                    const scheduleText = fullBlock && fullBlock.schedule ? `(${fullBlock.schedule})` : ''
-
-                    $blockList.append(`
-                         <div class="form-check">
-                              <input class="form-check-input block-check" type="checkbox" value="${block.id}" id="${block.id}">
-                              <label class="form-check-label" for="${block.id}">
-                                   ${block.label} ${scheduleText}
-                              </label>
-                         </div>
-                         <div class="block-details mt-2 ms-4 mb-3" id="${block.id}-details" style="display: none;">
-                              <input type="text" class="form-control mb-2" placeholder="Sub Plan Link">
-                              <textarea class="form-control" placeholder="Notes (optional)"></textarea>
-                         </div>
-                    `)
+               axios.get("/api/MyRequest/Getblocklist", {
+                    // Optional config can go here
                })
+                    .then(response => {
+                         const data = response.data
 
-               // Handle toggle visibility
-               $blockList.on('change', '.block-check', function () {
-                    const blockId = $(this).attr('id')
-                    const $target = $(`#${blockId}-details`)
-                    if ($(this).is(':checked')) {
-                         $target.show()
-                    } else {
-                         $target.hide()
-                    }
-               })
+                         data.forEach(block => {
+                              const scheduleText = `${block.day}, ${block.time} - ${block.room}`
+                              const displayLabel = `${block.course_name} (${block.block})`
+
+                              $blockList.append(`
+                                    <div class="form-check">
+                                        <input class="form-check-input block-check" type="checkbox" value="${block.schedule_id}" id="block-${block.schedule_id}">
+                                        <label class="form-check-label" for="block-${block.schedule_id}">
+                                            ${displayLabel}<br><small class="text-muted">${scheduleText}</small>
+                                        </label>
+                                    </div>
+                                    <div class="block-details mt-2 ms-4 mb-3" id="block-${block.schedule_id}-details" style="display: none;">
+                                        <input type="text" class="form-control mb-2" placeholder="Sub Plan Link">
+                                        <textarea class="form-control" placeholder="Notes (optional)"></textarea>
+                                    </div>
+                                `)
+                         })
+
+                         // Event listener for toggling sub plan inputs
+                         $blockList.on('change', '.block-check', function () {
+                              const scheduleId = $(this).val()
+                              const $target = $(`#block-${scheduleId}-details`)
+                              if ($(this).is(':checked')) {
+                                   $target.show()
+                              } else {
+                                   $target.hide()
+                              }
+                         })
+                    })
+                    .catch(error => {
+                         console.error("Failed to load block list:", error)
+                         $blockList.html('<div class="text-danger">Unable to load blocks. Please try again later.</div>')
+                    })
+          }
+
+          function GetListofRequest() {
+               axios.get("/api/MyRequest/GetListofRequest")
+                    .then(function (res) {
+                         const data = res.data
+                         const $list = $('#RequestList')
+                         $list.empty() // Clear previous content
+
+                         if (data.length > 0) {
+                              $.each(data, function (i, item) {
+                                   const requestDate = new Date(item.request_date).toLocaleDateString()
+                                   const approvedDate = item.approved_date ? new Date(item.approved_date).toLocaleDateString() : '—'
+                                   const assignedDate = item.assigned_date ? new Date(item.assigned_date).toLocaleDateString() : '—'
+
+                                   $list.append(`
+                                       <div class="card mb-3">
+                                           <div class="card-body">
+                                               <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="d-flex">
+                                                       ${renderCourseWithBlock(item.course_name,item.block)}
+                                                    </div>
+                                                  <span class="badge bg-${getStatusColor(item.status)} text-uppercase align-self-start">${item.statusDetails}</span>
+                                               </div>
+                                               <small class="text-secondary">${item.day}, ${item.time} - ${item.room}</small>
+
+                                               <div class="d-flex flex-column gap-1 mt-2 p-2 bg-light rounded-3">
+                                                  <span><strong>Request Date:</strong> ${requestDate}</span>
+                                                  <span><strong>Sub Plan:</strong> <a href="${item.subplanlink}" target="_blank">${item.subplanlink}</a></span>
+                                                  <span><strong>Reason:</strong> ${item.reason}</span>
+                                                  <span><strong>Notes:</strong> ${item.notes}</span>
+                                                  <span class="d-none"><strong>Approved:</strong> ${approvedDate}</span>
+                                                  <span class="d-none"<strong>Assigned:</strong> ${assignedDate}</span>
+                                               </div>
+                                               
+                                               
+                                           </div>
+                                       </div>
+                                   `)
+                              })
+                         } else {
+                              $list.html('<div class="alert alert-info">No requests found.</div>')
+                         }
+                    })
+                    .catch(function (err) {
+                         console.error(err)
+                         $('#RequestList').html('<div class="alert alert-danger">Failed to load requests.</div>')
+                    })
+          }
+
+          function updateSubmitButtonState() {
+               const isConsentChecked = $('#termsCheck').is(':checked')
+               const isAtLeastOneBlockChecked = $('.block-check:checked').length > 0
+
+               $('#btnSubmit').prop('disabled', !(isConsentChecked && isAtLeastOneBlockChecked))
+          }
+
+          function getStatusColor(status) {
+               switch (status) {
+                    case 1: return 'warning' // For Assignment
+                    case 2: return 'success' // Approved/Assigned
+                    case 3: return 'secondary' // Completed
+                    default: return 'dark'
+               }
+          }
+
+          function renderCourseWithBlock(course, blockName) {
+               const blockColors = {
+                    "A": "bg-danger",
+                    "B": "bg-primary",
+                    "C": "bg-success",
+                    "D": "bg-warning",
+                    "E": "bg-info",
+                    "F": "bg-secondary",
+                    "G": "bg-dark",
+                    "H": "bg-teal", // custom
+                    "HR": "bg-pink", // custom
+                    "Advisory": "bg-purple", // custom
+                    "Lunch": "bg-orange" // custom
+               };
+
+               const blockLabel = blockName.replace("Block ", "").trim() // Get just "A", "B", etc.
+               const colorClass = blockColors[blockLabel] || 'bg-dark'
+
+               return `
+                  <div class="d-flex align-items-center gap-2">
+                      <h5 class="mb-0">${course}</h5>
+                      <span class="badge ${colorClass} block">${blockLabel}</span>
+                  </div>
+              `
           }
      </script>
 
