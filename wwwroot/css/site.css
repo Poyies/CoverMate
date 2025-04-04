@@ -1,0 +1,64 @@
+html {
+     font-size: 14px;
+}
+
+@media (min-width: 768px) {
+     html {
+          font-size: 16px;
+     }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+     position: relative;
+     min-height: 100%;
+}
+
+body {
+     margin-bottom: 60px;
+}
+
+.list-group-item {
+     background: transparent;
+}
+
+     .list-group-item:hover {
+          color: inherit;
+     }
+
+/*OVERRIDE*/
+.btn {
+     border-radius: 0.4rem;
+}
+
+img.rounded-circle {
+     background-color: #eee;
+}
+
+.rounded-4 {
+     border-radius: 0.4rem;
+}
+
+.rounded-5 {
+     border-radius: 0.5rem;
+}
+
+.rounded-8 {
+     border-radius: 0.8rem;
+}
+
+/*CUSTOM*/
+.text-truncate-multiple {
+     display: -webkit-box;
+     -webkit-box-orient: vertical;
+     -webkit-line-clamp: 2;
+     overflow: hidden;
+}
+
+.sticky-top-shadow {
+     /*     transition: 0.15s all ease;*/
+     box-shadow: 0px 15px 10px -15px #11111177;
+}

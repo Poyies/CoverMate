@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "axios@1.7.8",
+      "destination": "wwwroot/lib/axios/"
+    }
+  ]
+}

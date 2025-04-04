@@ -1,0 +1,36 @@
+﻿
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <title>
+          @ViewData["Title"]
+     </title>
+     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+     <link rel="stylesheet" href="https://kit.fontawesome.com/cbb8b7ea9e.css" crossorigin="anonymous" />
+     @*<link rel="icon" type="image/png" href="~/images/appicon.png" />*@
+
+     <style>
+          body {
+               overflow: hidden;
+          }
+     </style>
+</head>
+<body class="bg-light">
+     @*<img src='https://www.photos-public-domain.com/wp-content/uploads/2012/01/crumpled-green-paper-texture.jpg' alt="" class="position-fixed w-100 h-100" style="z-index:-1;object-fit: cover; opacity: 0.2" />*@
+
+     <main role="main">
+          @RenderBody()
+     </main>
+
+     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+     <script src="~/js/site.js" asp-append-version="true"></script>
+     <script src="~/lib/axios/axios.min.js"></script>
+
+     @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

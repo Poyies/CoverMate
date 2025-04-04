@@ -1,0 +1,57 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Accessor
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <title>CoverMate | @ViewData["Title"]</title>
+     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+     <link rel="stylesheet" href="https://kit.fontawesome.com/cbb8b7ea9e.css" crossorigin="anonymous" />
+     <link rel="stylesheet" href="~/CoverMate.styles.css" asp-append-version="true" />
+</head>
+<body class="bg-light">
+     <header>
+          <nav class="navbar navbar-expand-sm bg-white navbar-toggleable-sm navbar-light shadow-sm py-3 mb-4">
+               <div class="container">
+                    <a class="navbar-brand d-flex align-items-center gap-2">
+                         @*<img src="https://pdportal.ismanila.org/Images/img-login.png" class="" height="50" width="50" alt="..." loading="lazy">*@
+                         <h3 class="fw-bold mb-0">CoverMate</h3>
+                    </a>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                         <ul class="navbar-nav flex-grow-1 ms-2">
+                              @if (User.IsInRole("Requestor"))
+                              {
+                                   <li class="nav-item">
+                                        <a class="nav-link @(Accessor.HttpContext.Request.Path.Value == "/MyRequests" ? "fw-bold text-dark" : "" )" asp-area="" asp-page="MyRequests">My Requests</a>
+                                   </li>
+                              }
+                              @if (User.IsInRole("Approver"))
+                              {
+                                   <li class="nav-item">
+                                        <a class="nav-link @(Accessor.HttpContext.Request.Path.Value == "/Approval" ? "fw-bold text-dark" : "" )" asp-area="" asp-page="Approval">Approval</a>
+                                   </li>
+                              }
+                         </ul>
+                         <div class="mx-2">
+                              <partial name="_LoginStatusPartial" />
+                         </div>
+                    </div>
+               </div>
+          </nav>
+     </header>
+     <div class="container position-relative">
+          <main role="main" class="pb-3">
+               @RenderBody()
+          </main>
+     </div>
+
+
+     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+     <script src="~/js/site.js" asp-append-version="true"></script>
+
+     @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

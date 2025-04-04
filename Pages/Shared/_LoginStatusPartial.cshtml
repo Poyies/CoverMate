@@ -1,0 +1,36 @@
+﻿@if (User.Identity.IsAuthenticated)
+{
+     <div class="dropdown">
+          <div class="d-flex gap-2 align-items-center" data-bs-toggle="dropdown" aria-expanded="false" role="button">
+               <span>@User.Identity.Name</span>
+               <img loading="lazy" class="rounded-circle bg-white" src='https://i.pinimg.com/474x/d6/cd/f2/d6cdf2a5daaf96462127cc31fb621851.jpg' height="40" width="40">
+          </div>
+          <div class="dropdown-menu dropdown-menu-end py-0 overflow-hidden border shadow rounded-3" style="min-width:22rem; z-index: 1021;">
+               <div class="d-flex flex-column gap-3 p-3">
+                    <div class="d-flex flex-column justify-content-center align-items-center gap-2 p-3 rounded-3 bg-white">
+                         <img class="rounded-circle bg-white" src="https://i.pinimg.com/474x/d6/cd/f2/d6cdf2a5daaf96462127cc31fb621851.jpg" height="90" width="90">
+                         
+                         <div class="d-flex flex-column text-center">
+                              <label class="fs-5">@User.Identity.Name</label>
+                              <small class="text-secondary">@User.Claims.FirstOrDefault(c => c.Type == "Email")?.Value</small>
+                         </div>
+                    </div>
+                    <form method="post" class="d-flex justify-content-end" asp-page="/Logout">
+                         <button type="submit" class="btn btn-secondary btn-lg w-100">Logout</button>
+                    </form>
+               </div>
+          </div>
+     </div>
+}
+else
+{
+     <a class="btn btn-link" asp-page="/Login">Login</a>
+}
+<script>
+     function Logout() {
+          if (confirm('Are you sure?'))
+               return true
+          else
+               return false
+     }
+</script>

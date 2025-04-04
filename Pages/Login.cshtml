@@ -1,0 +1,22 @@
+﻿@page
+@model CoverMate.Pages.LoginModel
+@{
+     Layout = "~/Pages/Shared/_LoginLayout.cshtml";
+     ViewData["Title"] = "CoverMate Login";
+}
+
+
+<div class="d-flex flex-column d-flex align-items-center justify-content-center gap-3 vh-100">
+     <img class="" src="https://cdn-icons-png.flaticon.com/512/8065/8065183.png" alt="" style="height: 250px;" />
+     <form method="post">
+          <h1 class="d-flex justify-content-center my-3 mb-5 fw-bold">CoverMate</h1>
+          <button class="btn bg-white rounded-3 d-flex align-items-center justify-content-center gap-3 px-3 fs-6 my-3 border" asp-page-handler="Google">
+               <img src="~/images/google-logo.png" alt="google-logo" height="50" />
+               <span>Login with ISM Google Account</span> 
+          </button>
+     </form>
+     <div class="fixed-bottom text-center p-3 opacity-50">
+          <span>Copyright ©2025</span><br><small>All rights reserved | International School Manila</small>
+     </div>
+</div>
+

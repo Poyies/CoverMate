@@ -1,0 +1,176 @@
+﻿@page
+@model CoverMate.Pages.MyRequestsModel
+@{
+     ViewBag.Title = "My Requests";
+}
+
+
+<style>
+     i.fal {
+          width: 30px;
+          text-align: center;
+     }
+
+     .block {
+          height: 25px;
+          width: 25px;
+          color: white;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 1rem;
+          font-size: 1rem;
+     }
+</style>
+
+<div class="d-flex justify-content-between">
+     <h4 class="fw-bold">My Requests</h4>
+     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalForm">
+          New Sub Request
+     </button>
+</div>
+<br />
+<div class="row">
+     <div class="col-12">
+          <h6>March 25, 2025</h6>
+          <div class="accordion" id="accordionExample">
+               <ul class="list-group bg-white">
+                    <li class="list-group-item p-3">
+                         <div class="d-flex flex-column gap-2">
+                              <div class="d-flex justify-content-between align-items-center">
+                                   <div class="d-flex align-items-center gap-2">
+                                        <h5 class="mb-0">Explore Computer Science </h5>
+                                        <span class="badge bg-danger block">A</span>
+                                   </div>
+                                   <span class="badge alert-success">For Approval</span>
+                              </div>
+                              <div class="d-flex gap-4">
+                                   <div class="d-flex gap-2 align-items-center">
+                                        <i class="fal fa-building"></i>
+                                        <span>RM 3002</span>
+                                   </div>
+                              </div>
+                         </div>
+                    </li>
+               </ul>
+          </div>
+     </div>
+</div>
+
+
+
+<div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true">
+     <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+               <div class="modal-header">
+                    <h5 class="modal-title" id="modalFormLabel">Sub Request Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                    <form class="d-flex flex-column gap-2">
+                         <div class="row align-items-start">
+                              <div class="col-3">
+                                   <label for="txtDate" class="col-form-label">Date</label>
+                              </div>
+                              <div class="col-9">
+                                   <input id="txtDate" type="date" class="form-control">
+                              </div>
+                         </div>
+                         <div class="row align-items-start">
+                              <div class="col-3">
+                                   <label for="txtReason" class="col-form-label">Reason for Sub</label>
+                              </div>
+                              <div class="col-9">
+                                   <input id="txtReason" class="form-control" />
+                              </div>
+                         </div>
+                         <div class="row align-items-start">
+                              <div class="col-3">
+                                   <label for="chkBlock" class="col-form-label">Block</label>
+                              </div>
+                              <div class="col-9">
+                                   <div id="blockList" class="d-flex flex-column gap-1"></div>
+                              </div>
+                         </div>
+                    </form>
+               </div>
+               <div class="modal-footer justify-content-between align-items-center">
+                    <div class="form-check">
+                         <input type="checkbox" class="form-check-input" id="termsCheck">
+                         <label class="form-check-label" for="termsCheck">I've talked to my PL and Principal about this absence.</label>
+                    </div>
+                    <div>
+                         <button type="button" class="btn" data-bs-dismiss="modal">Close</button>
+                         <button type="submit" class="btn btn-primary">Submit Request</button>
+                    </div>
+               </div>
+          </div>
+     </div>
+</div>
+
+
+@section Scripts{
+
+     <script>
+          // Master block array with schedule
+          const blocks = [
+               { id: "blockA", label: "Block A", schedule: "7:30 - 8:40" },
+               { id: "blockB", label: "Block B", schedule: "9:00 - 10:10" },
+               { id: "blockC", label: "Block C", schedule: "10:15 - 11:25" },
+               { id: "blockD", label: "Block D", schedule: "12:05 - 1:15" },
+               { id: "blockE", label: "Block E", schedule: "1:20 - 2:30" },
+               { id: "blockF", label: "Block F", schedule: "7:30- 8:40" },
+               { id: "blockG", label: "Block G", schedule: "9:00 - 10:10" },
+               { id: "blockH", label: "Block H", schedule: "10:15 - 11:25" },
+               { id: "advisory", label: "Advisory", schedule: "10:55 - 11:35" },
+               { id: "hr", label: "HR", schedule: "" },
+               { id: "lunchDuty", label: "Lunch Duty", schedule: "" }
+          ]
+
+          jQuery(function () {
+               getBlock()
+          })
+
+          function getBlock() {
+               // Filter blocks to only show the ones you want in the modal
+               const displayBlocks = [
+                    { id: "blockA", label: "Explore Computer Science Block A" },
+                    { id: "blockC", label: "Explore Computer Hardware Block C" },
+                    { id: "blockD", label: "Explore Computer Software Block D" }
+               ]
+
+               const $blockList = $('#blockList')
+
+               displayBlocks.forEach(block => {
+                    const fullBlock = blocks.find(b => b.id === block.id) // match from master list
+                    const scheduleText = fullBlock && fullBlock.schedule ? `(${fullBlock.schedule})` : ''
+
+                    $blockList.append(`
+                         <div class="form-check">
+                              <input class="form-check-input block-check" type="checkbox" value="${block.id}" id="${block.id}">
+                              <label class="form-check-label" for="${block.id}">
+                                   ${block.label} ${scheduleText}
+                              </label>
+                         </div>
+                         <div class="block-details mt-2 ms-4 mb-3" id="${block.id}-details" style="display: none;">
+                              <input type="text" class="form-control mb-2" placeholder="Sub Plan Link">
+                              <textarea class="form-control" placeholder="Notes (optional)"></textarea>
+                         </div>
+                    `)
+               })
+
+               // Handle toggle visibility
+               $blockList.on('change', '.block-check', function () {
+                    const blockId = $(this).attr('id')
+                    const $target = $(`#${blockId}-details`)
+                    if ($(this).is(':checked')) {
+                         $target.show()
+                    } else {
+                         $target.hide()
+                    }
+               })
+          }
+     </script>
+
+
+}
