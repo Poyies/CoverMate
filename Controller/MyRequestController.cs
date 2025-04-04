@@ -60,6 +60,52 @@ namespace CoverMate.Controller
             }
         }
 
+
+
+
+
+        /// <summary>
+        ///  Fetch List of subsitute request  based on teacher_id  =  User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetListofRequest")]
+        public async Task<IActionResult> GetListofRequest()
+        {
+            // Check if the user is authenticated
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
+            // Retrieve the teacher's ID from the current user's claims
+            var teacherId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var parameters = new { teacher_id = teacherId };
+
+            // Fetch data asynchronously using your shared class
+            DataTable dt = await _sharedClass.GetTableAsync("GetListofRequest", true, parameters);
+
+            // If data is found, convert DataTable rows to a list of dictionaries for JSON serialization
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                var result = new List<Dictionary<string, object>>();
+                foreach (DataRow row in dt.Rows)
+                {
+                    var rowDict = new Dictionary<string, object>();
+                    foreach (DataColumn column in dt.Columns)
+                    {
+                        rowDict[column.ColumnName] = row[column];
+                    }
+                    result.Add(rowDict);
+                }
+                return Ok(result);
+            }
+            else
+            {
+                return NotFound("No data found");
+            }
+        }
+
+
     }
 
 }
