@@ -60,14 +60,15 @@ namespace CoverMate.Pages
                 var googleClaims_name = googleClaims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
                 //username = googleClaims_email.Split("@")[0];
 
-                googleClaims_email = "amendoza@school.edu.ph";
-                googleClaims_email = "amendoza@school.edu.ph";
+                googleClaims_email = "rmendoza@school.edu.ph";       // Teacher
+                //googleClaims_email = "asantos@school.edu.ph"; // Admin
+                //googleClaims_email = "dlopez@school.edu.ph";   // Approver (principal)
                 var parameters = new
                 {
                     Email = googleClaims_email
                 };
 
-                DataTable dt = await _sharedClass.GetTableAsync("sp_GetUserLoginInfo", true, parameters);
+                DataTable dt = await _sharedClass.GetTableAsync("GetUserLoginInfo", true, parameters);
 
                 if (dt.Rows.Count > 0)
                 {
