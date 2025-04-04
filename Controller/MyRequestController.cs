@@ -11,6 +11,7 @@ namespace CoverMate.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class MyRequestController : ControllerBase
     {
         private readonly SharedClass _sharedClass;
@@ -146,7 +147,8 @@ namespace CoverMate.Controller
                 schedule_id = request.ScheduleId,
                 subplanlink = sanitizedSubplanlink,
                 reason = sanitizedReason,
-                notes = sanitizedNotes
+                notes = sanitizedNotes,
+                request_date = request.RequestDate
             };
 
             // Execute the stored procedure asynchronously.
