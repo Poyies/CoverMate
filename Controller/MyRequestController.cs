@@ -1,5 +1,6 @@
 ﻿using CoverMate.Helpers;
 using CoverMate.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using System.Data;
@@ -11,7 +12,8 @@ namespace CoverMate.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-
+    [AutoValidateAntiforgeryToken]
+    [Authorize(Roles = "Teacher")]
     public class MyRequestController : ControllerBase
     {
         private readonly SharedClass _sharedClass;
@@ -65,8 +67,6 @@ namespace CoverMate.Controller
 
 
 
-
-
         /// <summary>
         ///  Fetch List of subsitute request  based on teacher_id  =  User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         /// </summary>
@@ -82,7 +82,7 @@ namespace CoverMate.Controller
 
             // Retrieve the teacher's ID from the current user's claims
             var teacherId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var parameters = new { teacher_id = teacherId };
+            var parameters = new { teacher_id = teacherId, filterByTeacher = 1 };
 
             // Fetch data asynchronously using your shared class
             DataTable dt = await _sharedClass.GetTableAsync("GetListofRequest", true, parameters);
