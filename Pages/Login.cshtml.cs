@@ -85,7 +85,7 @@ namespace CoverMate.Pages
                         {
                             case "admin":
                                 claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-                                redirectPage = "/Approval";
+                                redirectPage = "/AllRequests";
                                 break;
 
                             case "teacher":
@@ -117,7 +117,7 @@ namespace CoverMate.Pages
             {
                 if (role == "Admin")
                 {
-                    redirectPage = "/Approval";
+                    redirectPage = "/AllRequests";
                 }
                 else
                 {
