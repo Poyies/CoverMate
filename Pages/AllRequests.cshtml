@@ -18,149 +18,7 @@
      <h4 class="fw-bold">All Requests</h4>
 </div>
 <br />
-<div id="AllRequests"></div>
-
-<!--<div class="row">
-     <div class="col-12">
-          <ul class="list-group bg-white" id="approvalList">-->
-<!-- List Item 1 -->
-<!--<li class="list-group-item p-3">
-     <div class="d-flex flex-column gap-1">
-          <div class="d-flex justify-content-between align-items-center">
-               <h5 class="mb-1">English</h5>
-               <span class="badge bg-success">For Approval</span>
-          </div>
-          <div class="d-flex justify-content-between align-items-end">
-               <div>
-                    <div class="d-flex gap-4 align-items-center">
-                         <div class="d-flex gap-2 align-items-center">
-                              <i class="fal fa-user"></i>
-                              <span>Teacher</span>
-                         </div>
-                         <i class="fal fa-arrow-right"></i>
-                         <div class="d-flex gap-2 align-items-center">
-                              <i class="fal fa-person-chalkboard"></i>
-                              <span>Substitute</span>
-                         </div>
-                    </div>
-                    <div class="d-flex gap-4">
-                         <div class="d-flex gap-2 align-items-center">
-                              <i class="fal fa-calendar-day"></i>
-                              <span>March 25, 2025 10:00 AM (Tomorrow)</span>
-                         </div>
-                         <div class="d-flex gap-2 align-items-center">
-                              <i class="fal fa-building"></i>
-                              <span>RM 3002</span>
-                         </div>
-                    </div>
-               </div>
-               <div class="d-flex gap-2">
-                    <button class="btn btn-outline-danger decline-btn">Decline</button>
-                    <button class="btn btn-primary approve-btn">Approve</button>
-               </div>
-          </div>
-     </div>
-</li>-->
-<!-- List Item 2 -->
-<!--<li class="list-group-item p-3">
-                    <div class="d-flex flex-column gap-1">
-                         <div class="d-flex justify-content-between align-items-center">
-                              <h5 class="mb-1">English</h5>
-                              <span class="badge bg-success">For Approval</span>
-                         </div>
-                         <div class="d-flex justify-content-between align-items-end">
-                              <div>
-                                   <div class="d-flex gap-4 align-items-center">
-                                        <div class="d-flex gap-2 align-items-center">
-                                             <i class="fal fa-user"></i>
-                                             <span>Teacher</span>
-                                        </div>
-                                        <i class="fal fa-arrow-right"></i>
-                                        <div class="d-flex gap-2 align-items-center">
-                                             <i class="fal fa-person-chalkboard"></i>
-                                             <span>Substitute</span>
-                                        </div>
-                                   </div>
-                                   <div class="d-flex gap-4">
-                                        <div class="d-flex gap-2 align-items-center">
-                                             <i class="fal fa-calendar-day"></i>
-                                             <span>March 25, 2025 10:00 AM (Tomorrow)</span>
-                                        </div>
-                                        <div class="d-flex gap-2 align-items-center">
-                                             <i class="fal fa-building"></i>
-                                             <span>RM 2029</span>
-                                        </div>
-                                   </div>
-                              </div>
-                              <div class="d-flex gap-2">
-                                   <button class="btn btn-outline-danger decline-btn">Decline</button>
-                                   <button class="btn btn-primary approve-btn">Approve</button>
-                              </div>
-                         </div>
-                    </div>
-               </li>
-          </ul>
-     </div>
-</div>-->
-@*<div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true">
-          <div class="modal-dialog">
-               <div class="modal-content">
-                    <div class="modal-header">
-                         <h5 class="modal-title" id="modalFormLabel">Schedule a Class</h5>
-                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                         <p>Please fill in the details below to request a class schedule</p>
-                         <form>
-                              <div class="mb-3">
-                                   <label class="form-label">First Name</label>
-                                   <input type="text" class="form-control" placeholder="Enter first name">
-                              </div>
-                              <div class="mb-3">
-                                   <label class="form-label">Last Name</label>
-                                   <input type="text" class="form-control" placeholder="Enter last name">
-                              </div>
-                              <div class="mb-3">
-                                   <label class="form-label">Email Address</label>
-                                   <input type="email" class="form-control" placeholder="Enter email">
-                              </div>
-                              <div class="mb-3">
-                                   <label class="form-label">Course Type</label>
-                                   <select class="form-select">
-                                        <option selected>Select a course</option>
-                                        <option value="1">Course 1</option>
-                                        <option value="2">Course 2</option>
-                                        <option value="3">Course 3</option>
-                                   </select>
-                              </div>
-                              <div class="mb-3 row">
-                                   <div class="col">
-                                        <label class="form-label">Preferred Date</label>
-                                        <input type="date" class="form-control">
-                                   </div>
-                                   <div class="col">
-                                        <label class="form-label">Preferred Time</label>
-                                        <input type="time" class="form-control">
-                                   </div>
-                              </div>
-                              <div class="mb-3">
-                                   <label class="form-label">Additional Notes</label>
-                                   <textarea class="form-control" rows="3" placeholder="Enter any additional details"></textarea>
-                              </div>
-                              <div class="mb-3 form-check">
-                                   <input type="checkbox" class="form-check-input" id="termsCheck">
-                                   <label class="form-check-label" for="termsCheck">I agree to the terms and conditions</label>
-                              </div>
-                         </form>
-                    </div>
-                    <div class="modal-footer">
-                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                         <button type="submit" class="btn btn-primary">Submit Request</button>
-                    </div>
-               </div>
-          </div>
-     </div>*@
-
+<div id="AllRequests" class=" bg-white list-group"></div>
 
 
 @section Scripts{
@@ -168,38 +26,6 @@
 
      <script>
           $(document).ready(function () {
-               // Handle Decline Button Click
-               //$(".decline-btn").on("click", function () {
-               //     var listItem = $(this).closest("li")
-
-               //     Swal.fire({
-               //          title: "Are you sure?",
-               //          text: "Once declined, this request will be removed!",
-               //          icon: "warning",
-               //          showCancelButton: true,
-               //          confirmButtonColor: "#d33",
-               //          cancelButtonColor: "#3085d6",
-               //          confirmButtonText: "Yes, Decline it!"
-               //     }).then((result) => {
-               //          if (result.isConfirmed) {
-               //               listItem.fadeOut(300, function () {
-               //                    $(this).remove()
-               //               })
-               //               Swal.fire("Declined!", "The request has been removed.", "success")
-               //          }
-               //     })
-               //})
-
-               //// Handle Approve Button Click
-               //$(".approve-btn").on("click", function () {
-               //     Swal.fire({
-               //          title: "Approved!",
-               //          text: "This request has been approved.",
-               //          icon: "success",
-               //          confirmButtonColor: "#3085d6"
-               //     })
-               //})
-
                getAllRequest()
 
           })
@@ -212,33 +38,70 @@
                          $list.empty() // Clear previous content
                          if (data.length > 0) {
 
+                              // Add header
+                              var header = `<div class="list-group-item bg-secondary text-white small">
+                                   <div class="row align-items-center">
+                                        <div class="col-2">
+                                             Requestor
+                                        </div>
+                                        <div class="col-2">
+                                             Course/Block
+                                        </div>
+                                        <div class="col-2">
+                                             Schedule
+                                        </div>
+                                        <div class="col-2">
+                                             Reason
+                                        </div>
+                                        <div class="col-2">
+                                             Status
+                                        </div>
+                                        <div class="col-2">
+                                             Substitute
+                                        </div>
+                                   </div>
+                              </div>`
+
+                              $list.append(header)
+
                               $.each(data, function (i, item) {
                                    const requestDate = new Date(item.request_date).toLocaleDateString()
                                    const approvedDate = item.approved_date ? new Date(item.approved_date).toLocaleDateString() : '—'
                                    const assignedDate = item.assigned_date ? new Date(item.assigned_date).toLocaleDateString() : '—'
 
+                                   const color = getColorClass(item.teacher_name);
+
                                    $list.append(`
-                                             <div class="card mb-3">
-                                                 <div class="card-body">
-                                                     <div class="d-flex justify-content-between align-items-center">
-                                                          <div class="d-flex">
-                                                             ${renderCourseWithBlock(item.course_name, item.block)}
-                                                          </div>
-                                                        <span class="badge alert-${getStatusColor(item.status)} text-capitalize align-self-start">${item.statusDetails}</span>
-                                                     </div>
-                                                     <small class="text-secondary">${item.day}, ${item.time} - ${item.room}</small>
-
-                                                     <div class="d-flex flex-column gap-1 mt-2 p-2 bg-light rounded-3">
-                                                        <span><strong>Request Date:</strong> ${requestDate}</span>
-                                                        <span><strong>Reason:</strong> ${item.reason}</span>
-                                                        <span><strong>Sub Plan:</strong> <a href="${item.subplanlink}" target="_blank">${item.subplanlink}</a></span>
-                                                        <span><strong>Notes:</strong> ${item.notes}</span>
-                                                        <select name="subList" class="form-select"></select>
-                                                        <span class="d-none"><strong>Approved:</strong> ${approvedDate}</span>
-                                                        <span class="d-none"<strong>Assigned:</strong> ${assignedDate}</span>
-                                                     </div>
-
-
+                                             <div class="list-group-item">
+                                                 <div class="row align-items-center">
+                                                       <div class="col-2">
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                 <div style="height:30px;width:30px;" class="fw-bold ${color} d-flex justify-content-center text-center align-items-center rounded-circle">${item.teacher_name.charAt(0)}</div>
+                                                                 <span>${item.teacher_name}</span>
+                                                            </div>
+                                                       </div>
+                                                       <div class="col-2">
+                                                            ${item.course_name} - ${item.block}
+                                                       </div>
+                                                       <div class="col-2">
+                                                            ${item.day}, ${item.time} - ${item.room}
+                                                       </div>
+                                                       <div class="col-2">
+                                                            ${item.reason}
+                                                       </div>
+                                                       <div class="col-2">
+                                                            <span class="badge alert-${getStatusColor(item.status)} text-capitalize align-self-start">${item.statusDetails}</span>
+                                                       </div>
+                                                       <div class="col-2">
+                                                            ${
+                                                                 item.status === 1
+                                                                      ? `<select name="subList" class="form-select"></select>`
+                                                                      : `<div class="d-flex align-items-center gap-2">
+                                                                           <div style="height:30px;width:30px;" class="fw-bold ${color} d-flex justify-content-center text-center align-items-center rounded-circle">${item.teacher_name.charAt(0)}</div>
+                                                                           <span>${item.substitute_name}</span>
+                                                                      </div>`
+                                                             }
+                                                       </div>
                                                  </div>
                                              </div>
                                          `)
@@ -283,7 +146,7 @@
                               $('select[name="subList"]').each(function () {
                                    const $select = $(this)
                                    $select.empty()
-                                   $select.append(`<option value="">Select Substitute</option>`)
+                                   $select.append(`<option value="">--Select Substitute--</option>`)
 
                                    Object.entries(grouped).forEach(([id, sub]) => {
                                         const courseList = sub.courses.join(", ")
@@ -306,6 +169,24 @@
                     case 3: return 'secondary' // Completed
                     default: return 'dark'
                }
+          }
+
+          const colorClasses = [
+               'alert-primary',
+               'alert-secondary',
+               'alert-success',
+               'alert-danger',
+               'alert-warning',
+               'alert-info',
+               'alert-dark'
+          ];
+          function getColorClass(name) {
+               let hash = 0
+               for (let i = 0; i < name.length; i++) {
+                    hash = name.charCodeAt(i) + ((hash << 5) - hash)
+               }
+               const index = Math.abs(hash) % colorClasses.length
+               return colorClasses[index]
           }
 
           function renderCourseWithBlock(course, blockName) {
