@@ -1,0 +1,79 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Accessor
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <title>CoverMate | @ViewData["Title"]</title>
+     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+     <link rel="stylesheet" href="https://kit.fontawesome.com/cbb8b7ea9e.css" crossorigin="anonymous" />
+     <link rel="stylesheet" href="~/CoverMate.styles.css" asp-append-version="true" />
+
+
+     <style>
+          body {
+               overflow-x: hidden;
+          }
+
+          #sideNav {
+               width: 250px;
+               height: 100vh;
+               left: 0;
+               top: 0;
+               z-index: 1;
+               padding: 1rem;
+          }
+
+               #sideNav > a {
+                    display: flex;
+                    text-decoration: none !important;
+                    border-radius: 0.5rem;
+                    color: #4f5151;
+                    align-items: center !important;
+                    gap: 1rem;
+                    width: 100%;
+                    padding: 1rem;
+               }
+
+                    #sideNav > a.active {
+                         font-weight: bold !important;
+                         background: #eee;
+                    }
+     </style>
+</head>
+<body class="bg-light">
+     <main>
+          <div id="sideNav" class="position-fixed d-flex flex-column align-items-start bg-white border-end">
+               <div class="navbar-brand d-flex align-items-center gap-2">
+                    <img src="https://cdn-icons-png.flaticon.com/512/8065/8065183.png" class="" height="40" width="40" alt="..." loading="lazy">
+                    <h3 class="fw-bold mb-0">CoverMate</h3>
+               </div>
+
+               <br />
+               <a asp-page="Dashboard" class="@(Accessor.HttpContext.Request.Path.Value == "/Dashboard" ? "active" : "" )">
+                    <i class="fa-light fa-analytics"></i>
+                    <span>Dashboard</span>
+               </a>
+
+               <a asp-page="AllRequests" class="@(Accessor.HttpContext.Request.Path.Value == "/AllRequests" ? "active" : "" )">
+                    <i class="fa-light fa-list"></i>
+                    <span>All Requests</span>
+               </a>
+          </div>
+          <div class="position-relative h-100 mb-4 p-4" style="width: calc(100vw - 250px); height: 100vh; left: 250px;">
+                    @RenderBody()
+          </div>
+     </main>
+
+
+     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+     <script src="~/lib/axios/axios.min.js"></script>
+     <script src="~/js/site.js" asp-append-version="true"></script>
+
+
+     @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

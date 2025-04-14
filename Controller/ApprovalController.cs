@@ -62,6 +62,69 @@ namespace CoverMate.Controller
         }
 
 
+        [HttpGet("GetListofSubs")]
+        public async Task<IActionResult> GetListofSubs()
+        {
+            // Check if the user is authenticated
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
+            // Fetch data asynchronously using your shared class
+            DataTable dt = await _sharedClass.GetTableAsync("GetActiveSubstitutesWithCourses", true, null);
+
+            // If data is found, convert DataTable rows to a list of dictionaries for JSON serialization
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                var result = new List<Dictionary<string, object>>();
+                foreach (DataRow row in dt.Rows)
+                {
+                    var rowDict = new Dictionary<string, object>();
+                    foreach (DataColumn column in dt.Columns)
+                    {
+                        rowDict[column.ColumnName] = row[column];
+                    }
+                    result.Add(rowDict);
+                }
+                return Ok(new { message = "List of active subs", data = result });
+            }
+            else
+            {
+                return NotFound(new { message = "No data found", statuscode = "404" });
+            }
+        }
+
+
+        [HttpGet("GetRequestSummary")]
+        public async Task<IActionResult> GetRequestSummary()
+        {
+            // Check if the user is authenticated (optional)
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
+            // Call the stored procedure using your shared utility
+            DataTable dt = await _sharedClass.GetTableAsync("GetRequestSummary", true, null);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                var summary = new
+                {
+                    total_requests = Convert.ToInt32(dt.Rows[0]["total_requests"]),
+                    pending_requests = Convert.ToInt32(dt.Rows[0]["pending_requests"]),
+                    approved_requests = Convert.ToInt32(dt.Rows[0]["approved_requests"])
+                };
+
+                return Ok(new { message = "Summary loaded", data = summary });
+            }
+            else
+            {
+                return NotFound(new { message = "No summary data found", statuscode = "404" });
+            }
+        }
 
 
     }
+}

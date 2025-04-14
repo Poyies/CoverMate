@@ -2,6 +2,7 @@
 @model AllRequestsModel
 @{
      ViewBag.Title = "All Requests";
+     Layout = "~/Pages/Shared/_AdminLayout.cshtml";
 }
 
 
@@ -12,6 +13,7 @@
      }
 </style>
 
+
 <div class="d-flex justify-content-start">
      <h4 class="fw-bold">All Requests</h4>
 </div>
@@ -21,47 +23,46 @@
 <!--<div class="row">
      <div class="col-12">
           <ul class="list-group bg-white" id="approvalList">-->
-               <!-- List Item 1 -->
-               <!--<li class="list-group-item p-3">
-                    <div class="d-flex flex-column gap-1">
-                         <div class="d-flex justify-content-between align-items-center">
-                              <h5 class="mb-1">English</h5>
-                              <span class="badge bg-success">For Approval</span>
+<!-- List Item 1 -->
+<!--<li class="list-group-item p-3">
+     <div class="d-flex flex-column gap-1">
+          <div class="d-flex justify-content-between align-items-center">
+               <h5 class="mb-1">English</h5>
+               <span class="badge bg-success">For Approval</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-end">
+               <div>
+                    <div class="d-flex gap-4 align-items-center">
+                         <div class="d-flex gap-2 align-items-center">
+                              <i class="fal fa-user"></i>
+                              <span>Teacher</span>
                          </div>
-                         <div class="d-flex justify-content-between align-items-end">
-                              <div>
-                                   <div class="d-flex gap-4 align-items-center">
-                                        <div class="d-flex gap-2 align-items-center">
-                                             <i class="fal fa-user"></i>
-                                             <span>Teacher</span>
-                                        </div>
-                                        <i class="fal fa-arrow-right"></i>
-                                        <div class="d-flex gap-2 align-items-center">
-                                             <i class="fal fa-person-chalkboard"></i>
-                                             <span>Substitute</span>
-                                        </div>
-                                   </div>
-                                   <div class="d-flex gap-4">
-                                        <div class="d-flex gap-2 align-items-center">
-                                             <i class="fal fa-calendar-day"></i>
-                                             <span>March 25, 2025 10:00 AM (Tomorrow)</span>
-                                        </div>
-                                        <div class="d-flex gap-2 align-items-center">
-                                             <i class="fal fa-building"></i>
-                                             <span>RM 3002</span>
-                                        </div>
-                                   </div>
-                              </div>
-                              <div class="d-flex gap-2">
-                                   <button class="btn btn-outline-danger decline-btn">Decline</button>
-                                   <button class="btn btn-primary approve-btn">Approve</button>
-                              </div>
+                         <i class="fal fa-arrow-right"></i>
+                         <div class="d-flex gap-2 align-items-center">
+                              <i class="fal fa-person-chalkboard"></i>
+                              <span>Substitute</span>
                          </div>
                     </div>
-               </li>-->
-
-               <!-- List Item 2 -->
-               <!--<li class="list-group-item p-3">
+                    <div class="d-flex gap-4">
+                         <div class="d-flex gap-2 align-items-center">
+                              <i class="fal fa-calendar-day"></i>
+                              <span>March 25, 2025 10:00 AM (Tomorrow)</span>
+                         </div>
+                         <div class="d-flex gap-2 align-items-center">
+                              <i class="fal fa-building"></i>
+                              <span>RM 3002</span>
+                         </div>
+                    </div>
+               </div>
+               <div class="d-flex gap-2">
+                    <button class="btn btn-outline-danger decline-btn">Decline</button>
+                    <button class="btn btn-primary approve-btn">Approve</button>
+               </div>
+          </div>
+     </div>
+</li>-->
+<!-- List Item 2 -->
+<!--<li class="list-group-item p-3">
                     <div class="d-flex flex-column gap-1">
                          <div class="d-flex justify-content-between align-items-center">
                               <h5 class="mb-1">English</h5>
@@ -101,67 +102,64 @@
           </ul>
      </div>
 </div>-->
-
-
-
 @*<div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true">
-     <div class="modal-dialog">
-          <div class="modal-content">
-               <div class="modal-header">
-                    <h5 class="modal-title" id="modalFormLabel">Schedule a Class</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-               </div>
-               <div class="modal-body">
-                    <p>Please fill in the details below to request a class schedule</p>
-                    <form>
-                         <div class="mb-3">
-                              <label class="form-label">First Name</label>
-                              <input type="text" class="form-control" placeholder="Enter first name">
-                         </div>
-                         <div class="mb-3">
-                              <label class="form-label">Last Name</label>
-                              <input type="text" class="form-control" placeholder="Enter last name">
-                         </div>
-                         <div class="mb-3">
-                              <label class="form-label">Email Address</label>
-                              <input type="email" class="form-control" placeholder="Enter email">
-                         </div>
-                         <div class="mb-3">
-                              <label class="form-label">Course Type</label>
-                              <select class="form-select">
-                                   <option selected>Select a course</option>
-                                   <option value="1">Course 1</option>
-                                   <option value="2">Course 2</option>
-                                   <option value="3">Course 3</option>
-                              </select>
-                         </div>
-                         <div class="mb-3 row">
-                              <div class="col">
-                                   <label class="form-label">Preferred Date</label>
-                                   <input type="date" class="form-control">
+          <div class="modal-dialog">
+               <div class="modal-content">
+                    <div class="modal-header">
+                         <h5 class="modal-title" id="modalFormLabel">Schedule a Class</h5>
+                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                         <p>Please fill in the details below to request a class schedule</p>
+                         <form>
+                              <div class="mb-3">
+                                   <label class="form-label">First Name</label>
+                                   <input type="text" class="form-control" placeholder="Enter first name">
                               </div>
-                              <div class="col">
-                                   <label class="form-label">Preferred Time</label>
-                                   <input type="time" class="form-control">
+                              <div class="mb-3">
+                                   <label class="form-label">Last Name</label>
+                                   <input type="text" class="form-control" placeholder="Enter last name">
                               </div>
-                         </div>
-                         <div class="mb-3">
-                              <label class="form-label">Additional Notes</label>
-                              <textarea class="form-control" rows="3" placeholder="Enter any additional details"></textarea>
-                         </div>
-                         <div class="mb-3 form-check">
-                              <input type="checkbox" class="form-check-input" id="termsCheck">
-                              <label class="form-check-label" for="termsCheck">I agree to the terms and conditions</label>
-                         </div>
-                    </form>
-               </div>
-               <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                              <div class="mb-3">
+                                   <label class="form-label">Email Address</label>
+                                   <input type="email" class="form-control" placeholder="Enter email">
+                              </div>
+                              <div class="mb-3">
+                                   <label class="form-label">Course Type</label>
+                                   <select class="form-select">
+                                        <option selected>Select a course</option>
+                                        <option value="1">Course 1</option>
+                                        <option value="2">Course 2</option>
+                                        <option value="3">Course 3</option>
+                                   </select>
+                              </div>
+                              <div class="mb-3 row">
+                                   <div class="col">
+                                        <label class="form-label">Preferred Date</label>
+                                        <input type="date" class="form-control">
+                                   </div>
+                                   <div class="col">
+                                        <label class="form-label">Preferred Time</label>
+                                        <input type="time" class="form-control">
+                                   </div>
+                              </div>
+                              <div class="mb-3">
+                                   <label class="form-label">Additional Notes</label>
+                                   <textarea class="form-control" rows="3" placeholder="Enter any additional details"></textarea>
+                              </div>
+                              <div class="mb-3 form-check">
+                                   <input type="checkbox" class="form-check-input" id="termsCheck">
+                                   <label class="form-check-label" for="termsCheck">I agree to the terms and conditions</label>
+                              </div>
+                         </form>
+                    </div>
+                    <div class="modal-footer">
+                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                         <button type="submit" class="btn btn-primary">Submit Request</button>
+                    </div>
                </div>
           </div>
-     </div>
-</div>*@
+     </div>*@
 
 
 
@@ -171,36 +169,172 @@
      <script>
           $(document).ready(function () {
                // Handle Decline Button Click
-               $(".decline-btn").on("click", function () {
-                    var listItem = $(this).closest("li")
+               //$(".decline-btn").on("click", function () {
+               //     var listItem = $(this).closest("li")
 
-                    Swal.fire({
-                         title: "Are you sure?",
-                         text: "Once declined, this request will be removed!",
-                         icon: "warning",
-                         showCancelButton: true,
-                         confirmButtonColor: "#d33",
-                         cancelButtonColor: "#3085d6",
-                         confirmButtonText: "Yes, Decline it!"
-                    }).then((result) => {
-                         if (result.isConfirmed) {
-                              listItem.fadeOut(300, function () {
-                                   $(this).remove()
+               //     Swal.fire({
+               //          title: "Are you sure?",
+               //          text: "Once declined, this request will be removed!",
+               //          icon: "warning",
+               //          showCancelButton: true,
+               //          confirmButtonColor: "#d33",
+               //          cancelButtonColor: "#3085d6",
+               //          confirmButtonText: "Yes, Decline it!"
+               //     }).then((result) => {
+               //          if (result.isConfirmed) {
+               //               listItem.fadeOut(300, function () {
+               //                    $(this).remove()
+               //               })
+               //               Swal.fire("Declined!", "The request has been removed.", "success")
+               //          }
+               //     })
+               //})
+
+               //// Handle Approve Button Click
+               //$(".approve-btn").on("click", function () {
+               //     Swal.fire({
+               //          title: "Approved!",
+               //          text: "This request has been approved.",
+               //          icon: "success",
+               //          confirmButtonColor: "#3085d6"
+               //     })
+               //})
+
+               getAllRequest()
+
+          })
+
+          function getAllRequest() {
+               axios.get("/api/Approval/GetListofRequest")
+                    .then(function (res) {
+                         const data = res.data.data
+                         const $list = $('#AllRequests')
+                         $list.empty() // Clear previous content
+                         if (data.length > 0) {
+
+                              $.each(data, function (i, item) {
+                                   const requestDate = new Date(item.request_date).toLocaleDateString()
+                                   const approvedDate = item.approved_date ? new Date(item.approved_date).toLocaleDateString() : '—'
+                                   const assignedDate = item.assigned_date ? new Date(item.assigned_date).toLocaleDateString() : '—'
+
+                                   $list.append(`
+                                             <div class="card mb-3">
+                                                 <div class="card-body">
+                                                     <div class="d-flex justify-content-between align-items-center">
+                                                          <div class="d-flex">
+                                                             ${renderCourseWithBlock(item.course_name, item.block)}
+                                                          </div>
+                                                        <span class="badge alert-${getStatusColor(item.status)} text-capitalize align-self-start">${item.statusDetails}</span>
+                                                     </div>
+                                                     <small class="text-secondary">${item.day}, ${item.time} - ${item.room}</small>
+
+                                                     <div class="d-flex flex-column gap-1 mt-2 p-2 bg-light rounded-3">
+                                                        <span><strong>Request Date:</strong> ${requestDate}</span>
+                                                        <span><strong>Reason:</strong> ${item.reason}</span>
+                                                        <span><strong>Sub Plan:</strong> <a href="${item.subplanlink}" target="_blank">${item.subplanlink}</a></span>
+                                                        <span><strong>Notes:</strong> ${item.notes}</span>
+                                                        <select name="subList" class="form-select"></select>
+                                                        <span class="d-none"><strong>Approved:</strong> ${approvedDate}</span>
+                                                        <span class="d-none"<strong>Assigned:</strong> ${assignedDate}</span>
+                                                     </div>
+
+
+                                                 </div>
+                                             </div>
+                                         `)
                               })
-                              Swal.fire("Declined!", "The request has been removed.", "success")
+
+                              getSubList()
+                         } else {
+                              $list.html('<div class="alert alert-info">No requests found.</div>')
                          }
                     })
-               })
-
-               // Handle Approve Button Click
-               $(".approve-btn").on("click", function () {
-                    Swal.fire({
-                         title: "Approved!",
-                         text: "This request has been approved.",
-                         icon: "success",
-                         confirmButtonColor: "#3085d6"
+                    .catch(function (err) {
+                         console.error(err)
+                         $('#AllRequests').html('<div class="alert alert-danger">Failed to load requests.</div>')
                     })
-               })
-          });
+          }
+
+          function getSubList() {
+               axios.get("/api/Approval/GetListofSubs")
+                    .then(function (res) {
+                         const subs = res.data.data
+
+                         if (subs && subs.length > 0) {
+                              // Group substitutes by ID so names aren't duplicated for each course
+                              const grouped = {}
+
+                              subs.forEach(sub => {
+                                   const id = sub.substitute_id
+                                   const name = sub.substitute_name
+                                   const course = sub.course_name
+
+                                   if (!grouped[id]) {
+                                        grouped[id] = {
+                                             name: name,
+                                             courses: [course]
+                                        }
+                                   } else {
+                                        grouped[id].courses.push(course)
+                                   }
+                              })
+
+                              // Populate each subList <select> in the DOM
+                              $('select[name="subList"]').each(function () {
+                                   const $select = $(this)
+                                   $select.empty()
+                                   $select.append(`<option value="">Select Substitute</option>`)
+
+                                   Object.entries(grouped).forEach(([id, sub]) => {
+                                        const courseList = sub.courses.join(", ")
+                                        $select.append(`<option value="${id}">${sub.name} (${courseList})</option>`)
+                                   })
+                              })
+                         } else {
+                              console.warn("No active substitutes found.")
+                         }
+                    })
+                    .catch(function (err) {
+                         console.error("Error fetching substitutes:", err)
+                    })
+          }
+
+          function getStatusColor(status) {
+               switch (status) {
+                    case 1: return 'warning' // For Assignment
+                    case 2: return 'success' // Approved/Assigned
+                    case 3: return 'secondary' // Completed
+                    default: return 'dark'
+               }
+          }
+
+          function renderCourseWithBlock(course, blockName) {
+               const blockColors = {
+                    "A": "bg-danger",
+                    "B": "bg-primary",
+                    "C": "bg-success",
+                    "D": "bg-warning",
+                    "E": "bg-info",
+                    "F": "bg-secondary",
+                    "G": "bg-dark",
+                    "H": "bg-teal", // custom
+                    "HR": "bg-pink", // custom
+                    "Advisory": "bg-purple", // custom
+                    "Lunch": "bg-orange" // custom
+               }
+               console.log(blockName)
+               //const blockLabel = blockName.replace("Block ", "").trim() // Get just "A", "B", etc.
+               const blockLabel = typeof blockName === 'string' && blockName
+                    ? blockName.replace("Block ", "").trim()
+                    : "N/A"
+               const colorClass = blockColors[blockLabel] || 'bg-dark'
+
+               return `
+              <div class="d-flex align-items-center gap-2">
+                  <h5 class="mb-0">${course}</h5>
+                  <span class="badge ${colorClass} block">${blockLabel}</span>
+              </div>
+          `
+          }
      </script>
 }

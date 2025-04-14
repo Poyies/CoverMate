@@ -1,0 +1,64 @@
+﻿@page
+@model CoverMate.Pages.DashboardModel
+@{
+     ViewBag.Title = "Dashboard";
+     Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="d-flex justify-content-start">
+     <h4 class="fw-bold">Dashboard</h4>
+</div>
+<br />
+
+<div class="row">
+     <div class="col-md-4">
+          <div class="card p-3 shadow-sm">
+               <h6 class="text-muted">Total Requests</h6>
+               <h2 id="totalRequests">0</h2>
+               <small class="text-success">+12.5% from last month</small>
+          </div>
+     </div>
+     <div class="col-md-4">
+          <div class="card p-3 shadow-sm">
+               <h6 class="text-muted">Pending Approvals</h6>
+               <h2 id="pendingRequests">0</h2>
+               <small class="text-danger">23 urgent requests</small>
+          </div>
+     </div>
+     <div class="col-md-4">
+          <div class="card p-3 shadow-sm">
+               <h6 class="text-muted">Approved Requests</h6>
+               <h2 id="approvedRequests">0</h2>
+               <small class="text-success">+5.2% from last month</small>
+          </div>
+     </div>
+</div>
+
+
+
+
+@section Scripts{
+     <script>
+          $(document).ready(function () {
+               getRequestSummary()
+          });
+
+          function getRequestSummary() {
+               axios.get("/api/Approval/GetRequestSummary")
+                    .then(res => {
+                         const summary = res.data.data
+
+                         $('#totalRequests').text(summary.total_requests.toLocaleString())
+                         $('#pendingRequests').text(summary.pending_requests.toLocaleString())
+                         $('#approvedRequests').text(summary.approved_requests.toLocaleString())
+
+                         // You can also calculate trends or show % if you store last month's data
+                    })
+                    .catch(err => {
+                         console.error("Failed to load summary:", err)
+                    })
+          }
+
+     </script>
+}
