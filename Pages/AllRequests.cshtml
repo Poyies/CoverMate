@@ -11,6 +11,18 @@
           width: 30px;
           text-align: center;
      }
+
+     .block {
+          height: 20px;
+          width: 20px;
+          color: white;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 1rem;
+          font-size: 14px;
+          font-weight: 500;
+     }
 </style>
 
 <div id="AllRequests" class=" bg-white list-group"></div>
@@ -42,13 +54,13 @@
                                         <div class="col-2">
                                              Course/Block
                                         </div>
-                                        <div class="col-2">
+                                        <div class="col-3">
                                              Schedule
                                         </div>
                                         <div class="col-2">
                                              Reason
                                         </div>
-                                        <div class="col-2">
+                                        <div class="col-1">
                                              Status
                                         </div>
                                         <div class="col-2">
@@ -76,15 +88,18 @@
                                                             </div>
                                                        </div>
                                                        <div class="col-2">
-                                                            ${item.course_name} - ${item.block}
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                 ${renderCourseWithBlock(item.block)}
+                                                                 <span>${item.course_name}</span>
+                                                            </div>
                                                        </div>
-                                                       <div class="col-2">
+                                                       <div class="col-3">
                                                             ${item.day}, ${item.time} - ${item.room}
                                                        </div>
                                                        <div class="col-2">
                                                             ${item.reason}
                                                        </div>
-                                                       <div class="col-2">
+                                                       <div class="col-1">
                                                             <span class="badge alert-${getStatusColor(item.status)} text-capitalize align-self-start">${item.statusDetails}</span>
                                                        </div>
                                                        <div class="col-2">
@@ -145,12 +160,38 @@
 
                                    Object.entries(grouped).forEach(([id, sub]) => {
                                         const courseList = sub.courses.join(", ")
-                                        $select.append(`<option value="${id}">${sub.name} (${courseList})</option>`)
+                                        $select.append(`<option value="${id}" data-name="${sub.name}">${sub.name} (${courseList})</option>`)
                                    })
-                              })
+                              });
                          } else {
                               console.warn("No active substitutes found.")
                          }
+                    }).then(function () {
+                         $('select[name="subList"]').off('change').on('change', function () {
+                              const selectedId = $(this).val()
+                              const selectedName = $(this).find(':selected').data('name')
+
+                              if (selectedId !== "") {
+                                   Swal.fire({
+                                        title: 'Assign Substitute?',
+                                        text: `Do you want to assign to ${selectedName}?`,
+                                        icon: 'question',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Yes, assign',
+                                        cancelButtonText: 'Cancel'
+                                   }).then((result) => {
+                                        if (result.isConfirmed) {
+                                             // 🔥 Call assignment API or action here later
+                                             console.log(`Assigning sub ID ${selectedId} to request...`)
+
+                                             // TODO: You can make an axios.post here
+                                        } else {
+                                             // Optional: reset select if cancelled
+                                             $(this).val('')
+                                        }
+                                   })
+                              }
+                         });
                     })
                     .catch(function (err) {
                          console.error("Error fetching substitutes:", err)
@@ -184,7 +225,7 @@
                return colorClasses[index]
           }
 
-          function renderCourseWithBlock(course, blockName) {
+          function renderCourseWithBlock(blockName) {
                const blockColors = {
                     "A": "bg-danger",
                     "B": "bg-primary",
@@ -193,24 +234,26 @@
                     "E": "bg-info",
                     "F": "bg-secondary",
                     "G": "bg-dark",
-                    "H": "bg-teal", // custom
-                    "HR": "bg-pink", // custom
-                    "Advisory": "bg-purple", // custom
-                    "Lunch": "bg-orange" // custom
+                    "H": "bg-teal",
+                    "HR": "bg-pink",
+                    "Advisory": "bg-warning",
+                    "Lunch": "bg-orange"
                }
-               console.log(blockName)
-               //const blockLabel = blockName.replace("Block ", "").trim() // Get just "A", "B", etc.
+
                const blockLabel = typeof blockName === 'string' && blockName
                     ? blockName.replace("Block ", "").trim()
                     : "N/A"
+
                const colorClass = blockColors[blockLabel] || 'bg-dark'
 
-               return `
-              <div class="d-flex align-items-center gap-2">
-                  <h5 class="mb-0">${course}</h5>
-                  <span class="badge ${colorClass} block">${blockLabel}</span>
-              </div>
-          `
+               // 👨🏻‍💼 for Advisory, 🏫 for HR, 🍽️ for Lunch
+               const emojiLabel = blockLabel === "Advisory" ? "👨🏻‍💼"
+                    : blockLabel === "HR" ? "🏫"
+                         : blockLabel === "Lunch" ? "🍽️"
+                              : blockLabel
+
+               return `<span class="badge ${colorClass} block">${emojiLabel}</span>`
           }
+
      </script>
 }
