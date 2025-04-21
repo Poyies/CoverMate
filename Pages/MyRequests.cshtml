@@ -1,28 +1,9 @@
 ﻿@page
 @model CoverMate.Pages.MyRequestsModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @{
      ViewBag.Title = "My Requests";
 }
-
-
-<style>
-     i.fal {
-          width: 30px;
-          text-align: center;
-     }
-
-     .block {
-          height: 20px;
-          width: 20px;
-          color: white;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border-radius: 1rem;
-          font-size: 14px;
-          font-weight: 500;
-     }
-</style>
 
 <div class="d-flex justify-content-between">
      <h4 class="fw-bold">My Requests</h4>
@@ -31,6 +12,8 @@
      </button>
 </div>
 <br />
+<input type="hidden" id="RequestVerificationToken" name="__RequestVerificationToken" value="@Antiforgery.GetAndStoreTokens(HttpContext).RequestToken" />
+
 
 <div id="RequestList"></div>
 
@@ -85,9 +68,10 @@
 
 
 @section Scripts{
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
      <script>
-          jQuery(function () {               
+          jQuery(function () {
                getListofRequest()
 
                // When the consent checkbox is changed
@@ -101,8 +85,8 @@
                     var button = $(e.relatedTarget)
 
                     const today = new Date().toISOString().split('T')[0]
-                    modal.find('#txtDate').val(today);
-                    modal.find('#txtDate').attr('min', today);
+                    modal.find('#txtDate').val(today)
+                    modal.find('#txtDate').attr('min', today)
 
                     getBlockList()
                }).on('hidden.bs.modal', function (e) {
@@ -119,40 +103,40 @@
           function getListofRequest() {
                axios.get("/api/MyRequest/GetListofRequest")
                     .then(function (res) {
-                         const data = res.data.data         
+                         const data = res.data.data
                          const $list = $('#RequestList')
-                         $list.empty() // Clear previous content                         
+                         $list.empty() // Clear previous content
                          if (data.length > 0) {
-                              
+
                               $.each(data, function (i, item) {
                                    const requestDate = new Date(item.request_date).toLocaleDateString()
                                    const approvedDate = item.approved_date ? new Date(item.approved_date).toLocaleDateString() : '—'
                                    const assignedDate = item.assigned_date ? new Date(item.assigned_date).toLocaleDateString() : '—'
 
                                    $list.append(`
-                             <div class="card mb-3">
-                                 <div class="card-body">
-                                     <div class="d-flex justify-content-between align-items-center">
-                                          <div class="d-flex">
-                                             ${renderCourseWithBlock(item.course_name, item.block)}
-                                          </div>
-                                        <span class="badge alert-${getStatusColor(item.status)} text-capitalize align-self-start">${item.statusDetails}</span>
-                                     </div>
-                                     <small class="text-secondary">${item.day}, ${item.time} - ${item.room}</small>
+                                                 <div class="card mb-3">
+                                                     <div class="card-body">
+                                                         <div class="d-flex justify-content-between align-items-center">
+                                                              <div class="d-flex">
+                                                                 ${renderCourseWithBlock(item.course_name, item.block)}
+                                                              </div>
+                                                            <span class="badge alert-${getStatusColor(item.status)} text-capitalize align-self-start">${item.statusDetails}</span>
+                                                         </div>
+                                                         <small class="text-secondary">${item.day}, ${item.time} - ${item.room}</small>
 
-                                     <div class="d-flex flex-column gap-1 mt-2 p-2 bg-light rounded-3">
-                                        <span><strong>Request Date:</strong> ${requestDate}</span>
-                                        <span><strong>Sub Plan:</strong> <a href="${item.subplanlink}" target="_blank">${item.subplanlink}</a></span>
-                                        <span><strong>Reason:</strong> ${item.reason}</span>
-                                        <span><strong>Notes:</strong> ${item.notes}</span>
-                                        <span class="d-none"><strong>Approved:</strong> ${approvedDate}</span>
-                                        <span class="d-none"<strong>Assigned:</strong> ${assignedDate}</span>
-                                     </div>
-                                     
-                                     
-                                 </div>
-                             </div>
-                         `)
+                                                         <div class="d-flex flex-column gap-1 mt-2 p-2 bg-light rounded-3">
+                                                            <span><strong>Request Date:</strong> ${requestDate}</span>
+                                                            <span><strong>Sub Plan:</strong> <a href="${item.subplanlink}" target="_blank">${item.subplanlink}</a></span>
+                                                            <span><strong>Reason:</strong> ${item.reason}</span>
+                                                            <span><strong>Notes:</strong> ${item.notes}</span>
+                                                            <span class="d-none"><strong>Approved:</strong> ${approvedDate}</span>
+                                                            <span class="d-none"<strong>Assigned:</strong> ${assignedDate}</span>
+                                                         </div>
+
+
+                                                     </div>
+                                                 </div>
+                                             `)
                               })
                          } else {
                               $list.html('<div class="alert alert-info">No requests found.</div>')
@@ -178,17 +162,17 @@
                               const displayLabel = `${block.course_name} (${block.block})`
 
                               $blockList.append(`
-                                    <div class="form-check">
-                                        <input class="form-check-input block-check" type="checkbox" value="${block.schedule_id}" id="block-${block.schedule_id}">
-                                        <label class="form-check-label" for="block-${block.schedule_id}">
-                                            ${displayLabel}<br><small class="text-muted">${scheduleText}</small>
-                                        </label>
-                                    </div>
-                                    <div class="block-details mt-2 ms-4 mb-3" id="block-${block.schedule_id}-details" style="display: none;">
-                                        <input type="text" class="form-control mb-2" placeholder="Sub Plan Link">
-                                        <textarea class="form-control" placeholder="Notes (optional)"></textarea>
-                                    </div>
-                                `)
+                                                        <div class="form-check">
+                                                            <input class="form-check-input block-check" type="checkbox" value="${block.schedule_id}" id="block-${block.schedule_id}">
+                                                            <label class="form-check-label" for="block-${block.schedule_id}">
+                                                                ${displayLabel}<br><small class="text-muted">${scheduleText}</small>
+                                                            </label>
+                                                        </div>
+                                                        <div class="block-details mt-2 ms-4 mb-3" id="block-${block.schedule_id}-details" style="display: none;">
+                                                            <input type="text" class="form-control mb-2" placeholder="Sub Plan Link">
+                                                            <textarea class="form-control" placeholder="Notes (optional)"></textarea>
+                                                        </div>
+                                                    `)
                          })
 
                          // Event listener for toggling sub plan inputs
@@ -209,53 +193,76 @@
           }
 
           function submitSubRequests() {
+               const token = document.querySelector('#RequestVerificationToken').value
+
                const requestDate = $('#txtDate').val()
                const reason = $('#txtReason').val()
                const blocks = $('.block-check:checked')
 
                if (!requestDate || !reason || blocks.length === 0 || !$('#termsCheck').is(':checked')) {
-                    alert("Please complete all required fields.")
+                    Swal.fire("Please complete all required fields.")
                     return
                }
 
-               const postRequests = []
+               Swal.fire({
+                    title: 'Submit Request?',
+                    text: "Are you sure you want to submit your sub request?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, submit',
+                    cancelButtonText: 'Cancel'
+               }).then((result) => {
+                    if (result.isConfirmed) {
+                         const postRequests = []
 
-               blocks.each(function () {
-                    const scheduleId = $(this).val()
-                    const subPlanLink = $(`#block-${scheduleId}-details input`).val()
-                    const notes = $(`#block-${scheduleId}-details textarea`).val()
+                         blocks.each(function () {
+                              const scheduleId = $(this).val()
+                              const subPlanLink = $(`#block-${scheduleId}-details input`).val()
+                              const notes = $(`#block-${scheduleId}-details textarea`).val()
 
-                    const payload = {
-                         scheduleId: parseInt(scheduleId),
-                         subplanlink: subPlanLink,
-                         reason: reason,
-                         notes: notes,
-                         requestDate: requestDate
+                              const payload = {
+                                   ScheduleId: parseInt(scheduleId),
+                                   Subplanlink: subPlanLink,
+                                   Reason: reason,
+                                   Notes: notes,
+                                   RequestDate: requestDate
+                              }
+
+                              postRequests.push(
+                                   axios.post("/api/MyRequest/SetNewRequest", payload, {
+                                        headers: {
+                                             'RequestVerificationToken': token
+                                        }
+                                   }).then(res => res.data)
+                                        .catch(err => ({ statuscode: 400, error: err }))
+                              )
+                         })
+
+                         Promise.all(postRequests).then(results => {
+                              const failed = results.filter(r => r.statuscode !== 200)
+
+                              if (failed.length > 0) {
+                                   Swal.fire("Some requests failed.", "Please try again.", "warning")
+                              } else {
+                                   Swal.fire("Success", "Your request has been submitted.", "success")
+
+                                   // ✅ Clear and refresh the form/modal
+                                   $('#modalForm').modal('hide')
+                                   $('#btnSubmit').prop('disabled', true)
+                                   $('#termsCheck').prop('checked', false)
+                                   $('.block-check').prop('checked', false)
+                                   $('#txtReason').val('')
+                                   $('#txtDate').val(new Date().toISOString().split('T')[0])
+                                   $('#blockList').empty()
+
+                                   // ✅ Refresh request list
+                                   getListofRequest()
+                              }
+                         })
                     }
-
-                    postRequests.push(
-                         axios.post("/api/MyRequest/SetNewRequest", payload)
-                    )
                })
-
-               // Wait for all POSTs to complete
-               Promise.all(postRequests)
-                    .then(responses => {
-                         $('#modalForm').modal('hide')
-                         $('#btnSubmit').prop('disabled', true)
-                         $('#termsCheck').prop('checked', false)
-                         $('.block-check').prop('checked', false)
-                         $('#txtReason').val('')
-                         $('#txtDate').val(new Date().toISOString().split('T')[0])
-
-                         // ✅ Reload the request list after all posts succeed
-                         GetListofRequest()
-                    })
-                    .catch(err => {
-                         console.error("Some requests failed:", err)
-                         alert("Something went wrong. Please try again.")
-                    })
           }
+
 
           function updateSubmitButtonState() {
                const isConsentChecked = $('#termsCheck').is(':checked')
@@ -286,17 +293,17 @@
                     "HR": "bg-pink", // custom
                     "Advisory": "bg-purple", // custom
                     "Lunch": "bg-orange" // custom
-               };
+               }
 
                const blockLabel = blockName.replace("Block ", "").trim() // Get just "A", "B", etc.
                const colorClass = blockColors[blockLabel] || 'bg-dark'
 
                return `
-                  <div class="d-flex align-items-center gap-2">
-                      <h5 class="mb-0">${course}</h5>
-                      <span class="badge ${colorClass} block">${blockLabel}</span>
-                  </div>
-              `
+                                      <div class="d-flex align-items-center gap-2">
+                                          <h5 class="mb-0">${course}</h5>
+                                          <span class="badge ${colorClass} block">${blockLabel}</span>
+                                      </div>
+                                  `
           }
      </script>
 

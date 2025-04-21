@@ -20,8 +20,8 @@ namespace CoverMate.Model
         public string Reason { get; set; }
 
 
-        [Required(ErrorMessage = "Notes is required.")]
-        [StringLength(1000, ErrorMessage = "Notes cannot exceed 1000 characters.")]
+        //[Required(ErrorMessage = "Notes is required.")]
+        //[StringLength(1000, ErrorMessage = "Notes cannot exceed 1000 characters.")]
         public string Notes { get; set; }
 
         // RequestDate is required and must be today or a future date.
