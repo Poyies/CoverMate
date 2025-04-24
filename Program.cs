@@ -12,6 +12,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.Name = "CoverMate";
         options.LoginPath = "/Login";
         options.LogoutPath = "/Logout";
+        //options.AccessDeniedPath = "/Error";
         options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
         options.SlidingExpiration = true;
     })
@@ -60,7 +61,7 @@ if (!app.Environment.IsDevelopment())
 
 
 
-
+app.UseStatusCodePages();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

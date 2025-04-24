@@ -60,8 +60,8 @@ namespace CoverMate.Pages
                 var googleClaims_name = googleClaims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
                 //username = googleClaims_email.Split("@")[0];
 
-                //googleClaims_email = "rmendoza@school.edu.ph";
-                googleClaims_email = "legaspij@ismanila.org";
+                googleClaims_email = "dlopez@school.edu.ph";
+                //googleClaims_email = "legaspij@ismanila.org";
                 var parameters = new
                 {
                     Email = googleClaims_email
@@ -95,8 +95,8 @@ namespace CoverMate.Pages
                                 break;
 
                             default:
-                                claims.Add(new Claim(ClaimTypes.Role, "Guest"));
-                                redirectPage = "/Unauthorized";
+                                claims.Add(new Claim(ClaimTypes.Role, "Approver"));
+                                redirectPage = "/Approval";
                                 break;
                         }
                     }
@@ -119,6 +119,10 @@ namespace CoverMate.Pages
                 if (role == "Admin")
                 {
                     redirectPage = "/Dashboard";
+                }
+                else if (role == "Approver")
+                {
+                    redirectPage = "/Approval";
                 }
                 else
                 {

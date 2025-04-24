@@ -256,8 +256,7 @@ namespace CoverMate.Controller
             }
         }
 
-
-
+        // Async function for sending email notification
         private async Task<List<string>> GetAdminEmailsAsync()
         {
             var dt = await _sharedClass.GetTableAsync("SELECT email FROM Users WHERE role_id = 2 AND is_active = 1", false, null);

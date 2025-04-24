@@ -2,9 +2,8 @@
 <html>
 <head>
      <meta charset="UTF-8">
-     <title>New Substitute Request</title>
+     <title>You’ve been assigned as a substitute</title>
      <style>
-          /* Responsive styles */
           @media only screen and (max-width: 600px) {
                .container {
                     width: 100% !important;
@@ -31,7 +30,7 @@
           }
 
           .header {
-               background-color: #007bff;
+               background-color: #17a2b8;
                color: #ffffff;
                padding: 15px 20px;
                font-size: 20px;
@@ -60,7 +59,7 @@
           a.button {
                display: inline-block;
                margin-top: 15px;
-               background-color: #007bff;
+               background-color: #17a2b8;
                color: white;
                padding: 10px 20px;
                text-decoration: none;
@@ -71,23 +70,26 @@
 <body>
      <div class="container">
           <div class="header">
-               New Substitute Request
+               You’ve been assigned as a substitute
           </div>
           <div class="content">
-               <p><strong>@TeacherName</strong> has filed a new substitute request.</p>
+               <p>Hello <strong>@SubstituteName</strong>,</p>
 
-               <p><strong>Date Needed:</strong> @RequestDate</p>
-               <p><strong>Reason:</strong> @Reason</p>
-               <p>
-                    <strong>Sub Plan Link:</strong>
-                    <a href="@SubplanLink" target="_blank">@SubplanLink</a>
-               </p>
+               <p>You’ve been assigned to substitute for <strong>@TeacherName</strong>.</p>
 
-               <a class="button" href="https://covermate.yourschool.edu.ph">Log in to Assign</a>
+               <p><strong>Date:</strong> @RequestDate</p>
+               <p><strong>Course:</strong> @CourseName</p>
+               <p><strong>Room:</strong> @Room</p>
+               <p><strong>Time:</strong> @Time</p>
+               <p><strong>Notes:</strong> @Notes</p>
+
+               <p>Please review the sub plan and confirm with the office if needed.</p>
+
+               <a class="button" href="https://covermate.yourschool.edu.ph">View Request in CoverMate</a>
           </div>
           <div class="footer">
                © 2025 CoverMate | IS Manila<br>
-               This is an automated email from CoverMate.
+               This is an automated notification from CoverMate.
           </div>
      </div>
 </body>

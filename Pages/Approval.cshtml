@@ -1,16 +1,174 @@
 ﻿@page
 @model ApprovalModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
 @{
      ViewBag.Title = "Approval";
 }
 
+<h4 class="fw-bold mb-3">Requests for Approval</h4>
 
-@section Scripts{
+<div id="approvalList" class="list-group bg-white shadow-sm"></div>
+<input type="hidden" id="RequestVerificationToken" name="__RequestVerificationToken" value="@Antiforgery.GetAndStoreTokens(HttpContext).RequestToken" />
+
+
+@section Scripts {
      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
      <script>
           $(document).ready(function () {
-               
-          });
+               getApprovalList()
+          })
+
+          function getApprovalList() {
+               axios.get("/api/Approval/GetRequestsForApproval")
+                    .then(function (res) {
+                         const data = res.data.data
+                         const $list = $('#approvalList')
+                         $list.empty()
+
+                         if (data.length === 0) {
+                              $list.append(`<div class="list-group-item text-center text-muted">No pending approvals found.</div>`)
+                              return
+                         }
+
+                         // Add header
+                         $list.append(`
+                                            <div class="list-group-item bg-secondary text-white small">
+                                                <div class="row">
+                                                    <div class="col-2">Teacher</div>
+                                                    <div class="col-2">Substitute</div>
+                                                    <div class="col-3">Schedule</div>
+                                                    <div class="col-4">Follow-up Notes</div>
+                                                    <div class="col-1 text-center">Action</div>
+                                                </div>
+                                            </div>
+                                        `)
+
+                         data.forEach(item => {
+                              const requestDate = new Date(item.request_date).toLocaleDateString()
+                              const color = getColorClass(item.teacher_name)
+
+                              $list.append(`
+                                                <div class="list-group-item">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-2">
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                 <div style="height:30px;width:30px;" class="fw-bold ${color} d-flex justify-content-center text-center align-items-center rounded-circle">
+                                                                      <span class="fa fa-user"></span>
+                                                                 </div>
+                                                                 <span>${item.teacher_name}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                 <div style="height:30px;width:30px;" class="fw-bold ${color} d-flex justify-content-center text-center align-items-center rounded-circle">
+                                                                      <span class="fa fa-user"></span>
+                                                                 </div>
+                                                                 <span>${item.substitute_name}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3">
+                                                            <div class="d-flex align-items-center gap-2 mb-1">
+                                                               ${renderBlock(item.block)}
+                                                               <span>${item.course_name}</span>
+                                                           </div>
+                                                           <small class="text-muted">${item.day}, ${item.time} — ${item.room}</small>
+                                                        </div>
+                                                        <div class="col-4 small">
+                                                            ${item.followup_notes}
+                                                        </div>
+                                                        <div class="col-1 text-center">
+                                                            <button class="btn btn-success btn-sm" onclick="approveRequest(${item.request_id})">Approve</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `)
+                         })
+                    })
+                    .catch(function (err) {
+                         console.error(err)
+                         $('#approvalList').html('<div class="list-group-item text-danger">Failed to load approval list.</div>')
+                    })
+          }
+
+          function approveRequest(requestId) {
+               Swal.fire({
+                    title: 'Approve Request?',
+                    text: "Are you sure you want to approve this request?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, approve',
+                    cancelButtonText: 'Cancel'
+               }).then((result) => {
+                    if (result.isConfirmed) {
+                         // TODO: Approve API call here
+                         const token = document.querySelector('#RequestVerificationToken').value
+                         const payload = {
+                              requestId: requestId
+                         }
+                         axios.post("/api/Approval/ApproveRequest", payload, {
+                              headers: {
+                                   'RequestVerificationToken': token
+                              }
+                         })
+                              .then(res => {
+                                   Swal.fire("Approved!", res.data.message, "success")
+                                   getApprovalList() // reload the list
+                              })
+                              .catch(err => {
+                                   console.error(err)
+                                   Swal.fire("Error", "Failed to approve request.", "error")
+                              })
+                    }
+               })
+          }
+
+          const colorClasses = [
+               'alert-primary',
+               'alert-secondary',
+               'alert-success',
+               'alert-danger',
+               'alert-warning',
+               'alert-info',
+               'alert-dark'
+          ]
+          function getColorClass(name) {
+               let hash = 0
+               for (let i = 0; i < name.length; i++) {
+                    hash = name.charCodeAt(i) + ((hash << 5) - hash)
+               }
+               const index = Math.abs(hash) % colorClasses.length
+               return colorClasses[index]
+          }
+
+          function renderBlock(blockName) {
+               const blockColors = {
+                    "A": "bg-danger",
+                    "B": "bg-primary",
+                    "C": "bg-success",
+                    "D": "bg-warning",
+                    "E": "bg-info",
+                    "F": "bg-secondary",
+                    "G": "bg-dark",
+                    "H": "bg-teal",
+                    "HR": "bg-pink",
+                    "Advisory": "bg-purple",
+                    "Lunch": "bg-orange"
+               }
+
+               const blockLabel = typeof blockName === 'string' && blockName
+                    ? blockName.replace("Block ", "").trim()
+                    : "N/A"
+
+               const colorClass = blockColors[blockLabel] || 'bg-dark'
+
+               const emojiLabel = blockLabel === "Advisory" ? "👨🏻‍💼"
+                    : blockLabel === "HR" ? "🏫"
+                         : blockLabel === "Lunch" ? "🍽️"
+                              : blockLabel
+
+               return `<span class="badge ${colorClass} block" style="min-width:25px;">${emojiLabel}</span>`
+          }
      </script>
 }
