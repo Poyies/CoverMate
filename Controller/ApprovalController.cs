@@ -12,7 +12,7 @@ namespace CoverMate.Controller
     [Route("api/[controller]")]
     [ApiController]
     [AutoValidateAntiforgeryToken]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Approver")]
     public class ApprovalController : ControllerBase
     {
         private readonly SharedClass _sharedClass;
@@ -204,5 +204,69 @@ namespace CoverMate.Controller
             return StatusCode(500, new { message = "No result returned from stored procedure.", statuscode = 500 });
         }
 
+
+        /// <summary>
+        /// Get sub requests that have follow-up submitted and are pending approval
+        /// </summary>
+        [HttpGet("GetRequestsForApproval")]
+        public async Task<IActionResult> GetRequestsForApproval()
+        {
+            try
+            {
+                DataTable dt = await _sharedClass.GetTableAsync("GetRequestsForApproval", true);
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    var result = new List<Dictionary<string, object>>();
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        var rowDict = new Dictionary<string, object>();
+                        foreach (DataColumn column in dt.Columns)
+                        {
+                            rowDict[column.ColumnName] = row[column];
+                        }
+                        result.Add(rowDict);
+                    }
+
+                    return Ok(new { message = "List of requests for approval", data = result });
+                }
+                else
+                {
+                    return NotFound(new { message = "No requests found", statuscode = 404 });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Internal error", error = ex.Message });
+            }
+        }
+
+
+        [HttpPost("ApproveRequest")]
+        [Authorize(Roles = "Approver")]
+        public async Task<IActionResult> ApproveRequest([FromBody] ApproveRequest model)
+        {
+            if (!User.Identity.IsAuthenticated)
+                return Unauthorized();
+
+            var approverId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(approverId, out int approverIdInt))
+                return BadRequest(new { message = "Invalid session." });
+
+            var parameters = new { request_id = model.RequestId, approver_id = approverIdInt };
+
+            DataTable dt = await _sharedClass.GetTableAsync("ApproveRequest", true, parameters);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                var row = dt.Rows[0];
+                int code = Convert.ToInt32(row["statuscode"]);
+                string msg = row["message"].ToString();
+
+                return StatusCode(code, new { message = msg });
+            }
+
+            return StatusCode(500, new { message = "Unexpected error occurred." });
+        }
     }
 }
