@@ -14,16 +14,16 @@
 
 <body class="bg-light overflow-hidden">
      <div class="d-flex justify-content-center align-items-center vh-100">
-          <div class="card shadow-sm w-100" style="max-width: 600px;">
-               <div class="card-header bg-primary text-white">
+          <div class="card shadow-sm w-100" style="max-width: 500px;">
+               <div class="card-header bg-white p-3">
                     <h5 class="mb-0">CoverMate: Follow-up Form</h5>
                </div>
                <div class="card-body">
                     @if (Model.IsAlreadySubmitted)
                     {
-                         <div class="alert alert-success text-center p-4">
-                              <h4 class="mb-2">Follow-up already submitted</h4>
-                              <p>Thank you! This request has already been completed.</p>
+                         <div class="text-center p-4">
+                              <h5 class="mb-2">Follow-up already submitted</h5>
+                              <p class="text-muted">Thank you! This request has already been completed.</p>
                          </div>
                     }
                     else
@@ -33,7 +33,7 @@
 
                     <div>
                          <label for="notes" class="form-label">Session Notes</label>
-                         <textarea id="notes" class="form-control" rows="4" placeholder="Add notes about the session..." required></textarea>
+                         <textarea id="notes" class="form-control" rows="5" placeholder="Add notes about the session..." required></textarea>
                     </div>
 
                     <div class="form-check">
