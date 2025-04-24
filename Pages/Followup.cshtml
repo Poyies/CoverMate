@@ -1,16 +1,110 @@
 ﻿@page
 @model FollowupModel
 @{
+     Layout = null;
      ViewBag.Title = "Followup";
 }
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CoverMate | @ViewData["Title"]</title>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://kit.fontawesome.com/cbb8b7ea9e.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="~/CoverMate.styles.css" asp-append-version="true" />
 
-@section Scripts{
-     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<body class="bg-light overflow-hidden">
+     <div class="d-flex justify-content-center align-items-center vh-100">
+          <div class="card shadow-sm w-100" style="max-width: 600px;">
+               <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">CoverMate: Follow-up Form</h5>
+               </div>
+               <div class="card-body">
+                    @if (Model.IsAlreadySubmitted)
+                    {
+                         <div class="alert alert-success text-center p-4">
+                              <h4 class="mb-2">Follow-up already submitted</h4>
+                              <p>Thank you! This request has already been completed.</p>
+                         </div>
+                    }
+                    else
+                    {
+               <form id="followupForm" class="d-flex flex-column gap-3">
+                    <input type="hidden" id="requestId" value="@Model.RequestId" />
 
-     <script>
-          $(document).ready(function () {
-               
-          });
-     </script>
-}
+                    <div>
+                         <label for="notes" class="form-label">Session Notes</label>
+                         <textarea id="notes" class="form-control" rows="4" placeholder="Add notes about the session..." required></textarea>
+                    </div>
+
+                    <div class="form-check">
+                         <input type="checkbox" class="form-check-input" id="chkConfirm">
+                         <label class="form-check-label" for="chkConfirm">
+                              I confirm that I have completed my substitution duties.
+                         </label>
+                    </div>
+
+
+                    <button type="button" class="btn btn-success w-100" id="btnSubmit" onclick="submitFollowup()" disabled>
+                         Submit Confirmation
+                    </button>
+               </form>
+                    }
+               </div>
+          </div>
+     </div>
+</body>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/axios/axios.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+     let submitting = false
+
+     function submitFollowup() {
+          if (submitting) return
+
+          const requestId = $('#requestId').val()
+          const confirmed = $('#chkConfirm').is(':checked')
+          const notes = $('#notes').val().trim()
+
+          if (!confirmed || !notes) {
+               Swal.fire("Incomplete", "Please complete all fields before submitting.", "warning")
+               return
+          }
+
+          submitting = true
+          const $btn = $('#btnSubmit')
+          $btn.prop('disabled', true).text('Submitting...')
+
+          axios.post('/api/Followup/Submit', {
+               requestId: parseInt(requestId),
+               notes: notes
+          })
+               .then(res => {
+                    Swal.fire("Thank you!", "Your follow-up has been submitted.", "success")
+                         .then(() => {
+                              location.reload() // ✅ This triggers OnGet and re-renders the already submitted message
+                         })
+               })
+               .catch(err => {
+                    console.error(err)
+                    Swal.fire("Error", "Failed to submit follow-up. Please try again.", "error")
+               })
+               .finally(() => {
+                    submitting = false
+                    $btn.prop('disabled', true).text('Submit Confirmation')
+               })
+     }
+
+     $(document).ready(function () {
+          $('#chkConfirm, #notes').on('input change', function () {
+               const isConfirmed = $('#chkConfirm').is(':checked')
+               const hasNotes = $('#notes').val().trim().length > 0
+
+               $('#btnSubmit').prop('disabled', !(isConfirmed && hasNotes))
+          })
+     });
+</script>
