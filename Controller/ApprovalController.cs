@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CoverMate.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using System.Data;
@@ -125,6 +126,52 @@ namespace CoverMate.Controller
             }
         }
 
+
+        [HttpPost("AssignSubstitute")]
+        public async Task<IActionResult> AssignSubstitute([FromBody] AssignRequest model)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized(new { message = "Unauthorized access.", statuscode = 401 });
+            }
+
+            if (model == null || model.RequestId <= 0 || model.SubstituteId <= 0)
+            {
+                return BadRequest(new { message = "Invalid request payload.", statuscode = 400 });
+            }
+
+            var parameters = new
+            {
+                request_id = model.RequestId,
+                substitute_id = model.SubstituteId,
+                assigned_date = DateTime.Now
+            };
+
+            try
+            {
+                // replace sp here...
+                DataTable dt = await _sharedClass.GetTableAsync("AssignSubstituteToRequest", true, parameters);
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    string message = dt.Rows[0]["Message"].ToString();
+                    int statusCode = Convert.ToInt32(dt.Rows[0]["StatusCode"]);
+
+                    if (statusCode == 200)
+                        return Ok(new { message, statuscode = statusCode });
+                    else
+                        return BadRequest(new { message, statuscode = statusCode });
+                }
+                else
+                {
+                    return StatusCode(500, new { message = "Unexpected error during assignment.", statuscode = 500 });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Exception occurred.", error = ex.Message });
+            }
+        }
 
     }
 }
