@@ -71,6 +71,17 @@
      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
      <script>
+          $(document).ready(function () {
+               $('#txtDate').on('change input', function () {
+                    const date = $(this).val().trim()
+                    if (date) {
+                         getBlockList(date)
+                    } else {
+                         $('#blockList').empty()
+                    }
+               })
+          });
+
           jQuery(function () {
                getListofRequest()
 
@@ -88,7 +99,7 @@
                     modal.find('#txtDate').val(today)
                     modal.find('#txtDate').attr('min', today)
 
-                    getBlockList()
+                    getBlockList($('#txtDate').val())
                }).on('hidden.bs.modal', function (e) {
                     var modal = $(this)
 
@@ -147,50 +158,79 @@
                          $('#RequestList').html('<div class="alert alert-danger">Failed to load requests.</div>')
                     })
           }
+          //Adding date as parameter
+          // keep a reference to the current cancel token source
+          let blockListCancelSource = null
 
-          function getBlockList() {
+          function getBlockList(date) {
                const $blockList = $('#blockList')
-               $blockList.empty() // Clear old content
 
-               axios.get("/api/MyRequest/Getblocklist", {
-               })
+               // 1) cancel any previous request
+               if (blockListCancelSource) {
+                    blockListCancelSource.cancel('New request started')
+               }
+               blockListCancelSource = axios.CancelToken.source()
+
+               // 2) clear old content
+               $blockList.empty()
+
+               // 3) fire the new request with the cancel token
+               axios
+                    .get(
+                         `/api/MyRequest/Getblocklist?targetDate=${encodeURIComponent(date)}`,
+                         { cancelToken: blockListCancelSource.token }
+                    )
                     .then(response => {
-                         const data = response.data.data
+                         if (response.status === 200 && Array.isArray(response.data.data)) {
+                              response.data.data.forEach(block => {
+                                   const scheduleText = `${block.day}, ${block.time} - ${block.room}`
+                                   const displayLabel = `${block.course_name} (${block.block})`
 
-                         data.forEach(block => {
-                              const scheduleText = `${block.day}, ${block.time} - ${block.room}`
-                              const displayLabel = `${block.course_name} (${block.block})`
+                                   $blockList.append(`
+                                     <div class="form-check">
+                                       <input class="form-check-input block-check"
+                                              type="checkbox"
+                                              value="${block.schedule_id}"
+                                              id="block-${block.schedule_id}">
+                                       <label class="form-check-label"
+                                              for="block-${block.schedule_id}">
+                                         ${displayLabel}<br>
+                                         <small class="text-muted">${scheduleText}</small>
+                                       </label>
+                                     </div>
+                                     <div class="block-details mt-2 ms-4 mb-3"
+                                          id="block-${block.schedule_id}-details"
+                                          style="display: none;">
+                                       <input type="text" class="form-control mb-2" placeholder="Sub Plan Link">
+                                       <textarea class="form-control" placeholder="Notes (optional)"></textarea>
+                                     </div>
+                                   `)
+                              })
 
-                              $blockList.append(`
-                                                        <div class="form-check">
-                                                            <input class="form-check-input block-check" type="checkbox" value="${block.schedule_id}" id="block-${block.schedule_id}">
-                                                            <label class="form-check-label" for="block-${block.schedule_id}">
-                                                                ${displayLabel}<br><small class="text-muted">${scheduleText}</small>
-                                                            </label>
-                                                        </div>
-                                                        <div class="block-details mt-2 ms-4 mb-3" id="block-${block.schedule_id}-details" style="display: none;">
-                                                            <input type="text" class="form-control mb-2" placeholder="Sub Plan Link">
-                                                            <textarea class="form-control" placeholder="Notes (optional)"></textarea>
-                                                        </div>
-                                                    `)
-                         })
-
-                         // Event listener for toggling sub plan inputs
-                         $blockList.on('change', '.block-check', function () {
-                              const scheduleId = $(this).val()
-                              const $target = $(`#block-${scheduleId}-details`)
-                              if ($(this).is(':checked')) {
-                                   $target.show()
-                              } else {
-                                   $target.hide()
-                              }
-                         })
+                              // re‐bind toggle handler once
+                              $blockList.off('change', '.block-check')
+                                   .on('change', '.block-check', function () {
+                                        $(`#block-${this.value}-details`).toggle(this.checked)
+                                   })
+                         } else {
+                              const msg = response.data.message || 'No blocks to display.'
+                              $blockList.html(`<div class="text-danger">${msg}</div>`)
+                         }
                     })
                     .catch(error => {
-                         console.error("Failed to load block list:", error)
-                         $blockList.html('<div class="text-danger">Unable to load blocks. Please try again later.</div>')
+                         // ignore cancellations
+                         if (axios.isCancel(error)) return
+
+                         // real error → show the server’s message if present
+                         let msg = 'Unable to load blocks. Please try again later.'
+                         if (error.response?.data?.message) {
+                              msg = error.response.data.message
+                         }
+                         $blockList.html(`<div class="text-danger">${msg}</div>`)
                     })
           }
+
+
 
           function submitSubRequests() {
                const token = document.querySelector('#RequestVerificationToken').value
