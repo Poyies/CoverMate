@@ -252,35 +252,44 @@
                     confirmButtonText: 'Yes, submit',
                     cancelButtonText: 'Cancel'
                }).then((result) => {
-                    if (result.isConfirmed) {
-                         const postRequests = []
+                    if (!result.isConfirmed) return
 
-                         blocks.each(function () {
-                              const scheduleId = $(this).val()
-                              const subPlanLink = $(`#block-${scheduleId}-details input`).val()
-                              const notes = $(`#block-${scheduleId}-details textarea`).val()
+                    // show loading indicator
+                    Swal.fire({
+                         title: 'Submitting new request...',
+                         allowOutsideClick: false,
+                         didOpen: () => Swal.showLoading()
+                    })
 
-                              const payload = {
-                                   ScheduleId: parseInt(scheduleId),
-                                   Subplanlink: subPlanLink,
-                                   Reason: reason,
-                                   Notes: notes,
-                                   RequestDate: requestDate
-                              }
+                    const postRequests = []
+                    blocks.each(function () {
+                         const scheduleId = $(this).val()
+                         const subPlanLink = $(`#block-${scheduleId}-details input`).val()
+                         const notes = $(`#block-${scheduleId}-details textarea`).val()
 
-                              postRequests.push(
-                                   axios.post("/api/MyRequest/SetNewRequest", payload, {
-                                        headers: {
-                                             'RequestVerificationToken': token
-                                        }
-                                   }).then(res => res.data)
-                                        .catch(err => ({ statuscode: 400, error: err }))
-                              )
-                         })
+                         const payload = {
+                              ScheduleId: parseInt(scheduleId),
+                              Subplanlink: subPlanLink,
+                              Reason: reason,
+                              Notes: notes,
+                              RequestDate: requestDate
+                         }
 
-                         Promise.all(postRequests).then(results => {
+                         postRequests.push(
+                              axios.post("/api/MyRequest/SetNewRequest", payload, {
+                                   headers: { 'RequestVerificationToken': token }
+                              })
+                                   .then(res => res.data)
+                                   .catch(err => ({ statuscode: 400, error: err }))
+                         )
+                    })
+
+                    Promise.all(postRequests)
+                         .then(results => {
+                              // hide loader
+                              Swal.close()
+
                               const failed = results.filter(r => r.statuscode !== 200)
-
                               if (failed.length > 0) {
                                    Swal.fire("Some requests failed.", "Please try again.", "warning")
                               } else {
@@ -299,9 +308,15 @@
                                    getListofRequest()
                               }
                          })
-                    }
+                         .catch(err => {
+                              // this shouldn't usually fire because we've caught individual errors above,
+                              // but just in case:
+                              Swal.close()
+                              Swal.fire("Error", "An unexpected error occurred.", "error")
+                         })
                })
           }
+
 
 
           function updateSubmitButtonState() {
