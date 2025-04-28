@@ -60,8 +60,8 @@ namespace CoverMate.Pages
                 var googleClaims_name = googleClaims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
                 //username = googleClaims_email.Split("@")[0];
 
-                googleClaims_email = "dlopez@school.edu.ph";
-                //googleClaims_email = "legaspij@ismanila.org";
+                //googleClaims_email = "dlopez@school.edu.ph";
+                googleClaims_email = "htan@school.edu.ph";
                 var parameters = new
                 {
                     Email = googleClaims_email
