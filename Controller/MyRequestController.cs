@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using System.Data;
+using System.Globalization;
 using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -32,41 +33,95 @@ namespace CoverMate.Controller
         /// </summary>
         /// <returns></returns>
         [HttpGet("Getblocklist")]
-        public async Task<IActionResult> Getblocklist()
+        public async Task<IActionResult> Getblocklist([FromQuery] string targetDate)
         {
-            // Check if the user is authenticated
+            // 1. Auth check
             if (!User.Identity.IsAuthenticated)
+                return Unauthorized(new
+                {
+                    message = "You don’t have access to this route.",
+                    statuscode = 401
+                });
+
+            // 2. Pull teacher ID from claims
+            var teacherId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(teacherId))
+                return Unauthorized(new
+                {
+                    message = "Unable to determine your teacher ID.",
+                    statuscode = 401
+                });
+
+            // 3a. Required?
+            if (string.IsNullOrWhiteSpace(targetDate))
+                return BadRequest(new
+                {
+                    message = "Parameter 'Date' is required.",
+                    statuscode = 400
+                });
+
+            // 3b. Strict format YYYY-MM-DD
+            if (!DateTime.TryParseExact(
+                    targetDate,
+                    "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var parsedDate))
             {
-                return Unauthorized(new { message = "You dont have access to this route.", statuscode = 401 });
+                return BadRequest(new
+                {
+                    message = $"Invalid date format: '{targetDate}'. Use YYYY-MM-DD.",
+                    statuscode = 400
+                });
             }
 
-            // Retrieve the teacher's ID from the current user's claims
-            var teacherId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var parameters = new { teacher_id = teacherId };
+            // 3c. No past dates
+            if (parsedDate.Date < DateTime.Today)
+            {
+                return BadRequest(new
+                {
+                    message = "Date cannot be earlier than today.",
+                    statuscode = 400
+                });
+            }
 
-            // Fetch data asynchronously using your shared class
-            DataTable dt = await _sharedClass.GetTableAsync("GetBlocklist", true, parameters);
+            // 4. Build parameters for SP
+            var parameters = new
+            {
+                teacher_id = teacherId,
+                TargetDate = parsedDate
+            };
 
-            // If data is found, convert DataTable rows to a list of dictionaries for JSON serialization
+            // 5. Call your shared helper
+            DataTable dt = await _sharedClass.GetTableAsync(
+                "GetBlockList",
+               true,
+                parameters
+            );
+
+            // 6. Return result or 404
             if (dt != null && dt.Rows.Count > 0)
             {
-                var result = new List<Dictionary<string, object>>();
-                foreach (DataRow row in dt.Rows)
+                var result = dt.Rows.Cast<DataRow>()
+                    .Select(row => dt.Columns.Cast<DataColumn>()
+                        .ToDictionary(col => col.ColumnName, col => row[col]))
+                    .ToList();
+
+                return Ok(new
                 {
-                    var rowDict = new Dictionary<string, object>();
-                    foreach (DataColumn column in dt.Columns)
-                    {
-                        rowDict[column.ColumnName] = row[column];
-                    }
-                    result.Add(rowDict);
-                }
-                return Ok(new { message = "List of blocks", data = result });
+                    message = "List of blocks",
+                    data = result,
+                    statuscode = 200
+                });
             }
-            else
+
+            return NotFound(new
             {
-                return NotFound(new { message = "No data found", statuscode = "404" });
-            }
+                message = "No data found for the given date.",
+                statuscode = 404
+            });
         }
+
 
 
 
