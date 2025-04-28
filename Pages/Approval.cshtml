@@ -79,6 +79,7 @@
                                                             ${item.followup_notes}
                                                         </div>
                                                         <div class="col-1 text-center">
+                                                            <button class="btn btn-danger btn-sm" onclick="declineRequest(${item.request_id})">Decline</button>
                                                             <button class="btn btn-success btn-sm" onclick="approveRequest(${item.request_id})">Approve</button>
                                                         </div>
                                                     </div>
@@ -123,6 +124,27 @@
                     }
                })
           }
+
+          function declineRequest(requestId) {
+               Swal.fire({
+                    title: 'Decline Request?',
+                    text: "Are you sure you want to decline this substitute request?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, decline it',
+                    cancelButtonText: 'No, keep it'
+               }).then((result) => {
+                    if (result.isConfirmed) {
+                         Swal.fire(
+                              'Declined!',
+                              'The request has been declined (dummy only for now).',
+                              'success'
+                         )
+                         console.log(`Request ID ${requestId} declined.`) // 🚀 just log for now
+                    }
+               })
+          }
+
 
           const colorClasses = [
                'alert-primary',

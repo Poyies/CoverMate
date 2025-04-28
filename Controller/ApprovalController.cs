@@ -186,6 +186,7 @@ namespace CoverMate.Controller
                             .Replace("@CourseName", row["course_name"].ToString())
                             .Replace("@Room", row["room"].ToString())
                             .Replace("@Time", $"{row["day"]}, {row["time"]}")
+                            .Replace("@SubLink", row["subplanlink"].ToString())
                             .Replace("@Notes", string.IsNullOrEmpty(row["notes"].ToString()) ? "—" : row["notes"].ToString());
 
                         string subject = $"CoverMate: You've been assigned as a substitute for {row["teacher_name"]}";
@@ -196,7 +197,7 @@ namespace CoverMate.Controller
 
                     return Ok(new { message, statuscode = statusCode });
                 }
-                    
+
 
                 return StatusCode(500, new { message, statuscode = statusCode });
             }
@@ -268,5 +269,62 @@ namespace CoverMate.Controller
 
             return StatusCode(500, new { message = "Unexpected error occurred." });
         }
+
+        [HttpPost("SendFollowupEmail")]
+        public async Task<IActionResult> SendFollowupEmail([FromBody] ApproveRequest model)
+        {
+            if (model == null || model.RequestId <= 0)
+                return BadRequest(new { message = "Invalid request ID." });
+
+            // Query to get substitute, teacher, etc.
+            string query = @"
+                SELECT 
+                    r.request_id,
+                    r.request_date,
+                    s.name AS substitute_name,
+                    s.email AS substitute_email,
+                    t.name AS teacher_name,
+                    c.course_name
+                FROM Requests r
+                INNER JOIN Substitutes s ON r.substitute_id = s.substitute_id
+                INNER JOIN Teachers t ON r.teacher_id = t.teachers_id
+                INNER JOIN Schedules sc ON r.schedule_id = sc.schedule_id
+                INNER JOIN Courses c ON sc.course_id = c.course_id
+                WHERE r.request_id = @requestId
+            ";
+
+            var parameters = new { requestId = model.RequestId };
+            var dt = await _sharedClass.GetTableAsync(query, false, parameters);
+
+            if (dt == null || dt.Rows.Count == 0)
+                return NotFound(new { message = "Request not found." });
+
+            var row = dt.Rows[0];
+
+            // Load email template
+            string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "FollowupReminderEmail.html");
+            string emailBody = await System.IO.File.ReadAllTextAsync(templatePath);
+
+            // Replace placeholders
+            string followupLink = $"https://localhost:7134/Followup?requestId={model.RequestId}";
+            emailBody = emailBody
+                .Replace("@SubstituteName", row["substitute_name"].ToString())
+                .Replace("@TeacherName", row["teacher_name"].ToString())
+                .Replace("@RequestDate", Convert.ToDateTime(row["request_date"]).ToString("MMMM dd, yyyy"))
+                .Replace("@CourseName", row["course_name"].ToString())
+                .Replace("@FollowupLink", followupLink);
+
+            // 🔥 Send Email
+            string subject = $"CoverMate: Please complete your follow-up form";
+            string recipient = row["substitute_email"].ToString();
+
+            bool sent = EmailSender.SendEmail(subject, emailBody, recipient, "", "");
+
+            if (sent)
+                return Ok(new { message = "Follow-up email sent successfully." });
+            else
+                return StatusCode(500, new { message = "Failed to send email." });
+        }
+
     }
 }

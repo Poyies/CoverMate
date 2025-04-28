@@ -111,53 +111,108 @@
 
           })
 
+          //function getListofRequest() {
+          //     axios.get("/api/MyRequest/GetListofRequest")
+          //          .then(function (res) {
+          //               const data = res.data.data
+          //               const $list = $('#RequestList')
+          //               $list.empty() // Clear previous content
+          //               if (data.length > 0) {
+
+          //                    $.each(data, function (i, item) {
+          //                         const requestDate = new Date(item.request_date).toLocaleDateString()
+          //                         const approvedDate = item.approved_date ? new Date(item.approved_date).toLocaleDateString() : '—'
+          //                         const assignedDate = item.assigned_date ? new Date(item.assigned_date).toLocaleDateString() : '—'
+
+          //                         $list.append(`
+          //                                       <div class="card mb-3">
+          //                                           <div class="card-body">
+          //                                               <div class="d-flex justify-content-between align-items-center">
+          //                                                    <div class="d-flex">
+          //                                                       ${renderCourseWithBlock(item.course_name, item.block)}
+          //                                                    </div>
+          //                                                  <span class="badge alert-${getStatusColor(item.status)} text-capitalize align-self-start">${item.statusDetails}</span>
+          //                                               </div>
+          //                                               <small class="text-secondary">${item.day}, ${item.time} - ${item.room}</small>
+
+          //                                               <div class="d-flex flex-column gap-1 mt-2 p-2 bg-light rounded-3">
+          //                                                  <span><strong>Request Date:</strong> ${requestDate}</span>
+          //                                                  <span><strong>Sub Plan:</strong> <a href="${item.subplanlink}" target="_blank">${item.subplanlink}</a></span>
+          //                                                  <span><strong>Reason:</strong> ${item.reason}</span>
+          //                                                  <span><strong>Notes:</strong> ${item.notes}</span>
+          //                                                  <span class="d-none"><strong>Approved:</strong> ${approvedDate}</span>
+          //                                                  <span class="d-none"<strong>Assigned:</strong> ${assignedDate}</span>
+          //                                               </div>
+
+
+          //                                           </div>
+          //                                       </div>
+          //                                   `)
+          //                    })
+          //               } else {
+          //                    $list.html('<div class="alert alert-info">No requests found.</div>')
+          //               }
+          //          })
+          //          .catch(function (err) {
+          //               console.error(err)
+          //               $('#RequestList').html('<div class="alert alert-danger">Failed to load requests.</div>')
+          //          })
+          //}
           function getListofRequest() {
                axios.get("/api/MyRequest/GetListofRequest")
                     .then(function (res) {
                          const data = res.data.data
                          const $list = $('#RequestList')
                          $list.empty() // Clear previous content
-                         if (data.length > 0) {
 
+                         if (data && data.length > 0) {
                               $.each(data, function (i, item) {
                                    const requestDate = new Date(item.request_date).toLocaleDateString()
                                    const approvedDate = item.approved_date ? new Date(item.approved_date).toLocaleDateString() : '—'
                                    const assignedDate = item.assigned_date ? new Date(item.assigned_date).toLocaleDateString() : '—'
 
                                    $list.append(`
-                                                 <div class="card mb-3">
-                                                     <div class="card-body">
-                                                         <div class="d-flex justify-content-between align-items-center">
-                                                              <div class="d-flex">
-                                                                 ${renderCourseWithBlock(item.course_name, item.block)}
-                                                              </div>
-                                                            <span class="badge alert-${getStatusColor(item.status)} text-capitalize align-self-start">${item.statusDetails}</span>
-                                                         </div>
-                                                         <small class="text-secondary">${item.day}, ${item.time} - ${item.room}</small>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex">
+                                        ${renderCourseWithBlock(item.course_name, item.block)}
+                                    </div>
+                                    <span class="badge alert-${getStatusColor(item.status)} text-capitalize align-self-start">${item.statusDetails}</span>
+                                </div>
+                                <small class="text-secondary">${item.day}, ${item.time} - ${item.room}</small>
 
-                                                         <div class="d-flex flex-column gap-1 mt-2 p-2 bg-light rounded-3">
-                                                            <span><strong>Request Date:</strong> ${requestDate}</span>
-                                                            <span><strong>Sub Plan:</strong> <a href="${item.subplanlink}" target="_blank">${item.subplanlink}</a></span>
-                                                            <span><strong>Reason:</strong> ${item.reason}</span>
-                                                            <span><strong>Notes:</strong> ${item.notes}</span>
-                                                            <span class="d-none"><strong>Approved:</strong> ${approvedDate}</span>
-                                                            <span class="d-none"<strong>Assigned:</strong> ${assignedDate}</span>
-                                                         </div>
-
-
-                                                     </div>
-                                                 </div>
-                                             `)
+                                <div class="d-flex flex-column gap-1 mt-2 p-2 bg-light rounded-3">
+                                    <span><strong>Request Date:</strong> ${requestDate}</span>
+                                    <span><strong>Sub Plan:</strong> <a href="${item.subplanlink}" target="_blank">${item.subplanlink}</a></span>
+                                    <span><strong>Reason:</strong> ${item.reason}</span>
+                                    <span><strong>Notes:</strong> ${item.notes}</span>
+                                    <span class="d-none"><strong>Approved:</strong> ${approvedDate}</span>
+                                    <span class="d-none"><strong>Assigned:</strong> ${assignedDate}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `)
                               })
                          } else {
                               $list.html('<div class="alert alert-info">No requests found.</div>')
                          }
                     })
                     .catch(function (err) {
-                         console.error(err)
-                         $('#RequestList').html('<div class="alert alert-danger">Failed to load requests.</div>')
+                         const $list = $('#RequestList')
+                         $list.empty() // Clear previous content
+
+                         if (err.response && err.response.status === 404) {
+                              // If 404, treat as no records found, not error
+                              $list.html('<div class="alert alert-info">No requests found.</div>')
+                         } else {
+                              console.error(err)
+                              $list.html('<div class="alert alert-danger">Failed to load requests.</div>')
+                         }
                     })
           }
+
+
           //Adding date as parameter
           // keep a reference to the current cancel token source
           let blockListCancelSource = null
@@ -229,8 +284,6 @@
                          $blockList.html(`<div class="text-danger">${msg}</div>`)
                     })
           }
-
-
 
           function submitSubRequests() {
                const token = document.querySelector('#RequestVerificationToken').value
