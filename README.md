@@ -1,5 +1,5 @@
 
-<h2 align="center">Covermate</h3>
+<h2 align="center">Covermate</h2>
 
 <div align="center">
   <img width="700px" height="400px" src="https://drive.google.com/uc?export=view&id=1Xr4UjVLajaLngtu_6IrUmez_xyaezNpf" alt="Covermate Logo">
