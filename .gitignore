@@ -362,3 +362,10 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Pages/Login.cshtml.cs
+
+# Local config
+appsettings.json
+appsettings.*.local.json
+
+# User secrets
+secrets.json

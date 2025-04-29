@@ -243,6 +243,33 @@ namespace CoverMate.Controller
         }
 
 
+        //[HttpPost("ApproveRequest")]
+        //[Authorize(Roles = "Approver")]
+        //public async Task<IActionResult> ApproveRequest([FromBody] ApproveRequest model)
+        //{
+        //    if (!User.Identity.IsAuthenticated)
+        //        return Unauthorized();
+
+        //    var approverId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //    if (!int.TryParse(approverId, out int approverIdInt))
+        //        return BadRequest(new { message = "Invalid session." });
+
+        //    var parameters = new { request_id = model.RequestId, approver_id = approverIdInt };
+
+        //    DataTable dt = await _sharedClass.GetTableAsync("ApproveRequest", true, parameters);
+
+        //    if (dt != null && dt.Rows.Count > 0)
+        //    {
+        //        var row = dt.Rows[0];
+        //        int code = Convert.ToInt32(row["statuscode"]);
+        //        string msg = row["message"].ToString();
+
+        //        return StatusCode(code, new { message = msg });
+        //    }
+
+        //    return StatusCode(500, new { message = "Unexpected error occurred." });
+        //}
+
         [HttpPost("ApproveRequest")]
         [Authorize(Roles = "Approver")]
         public async Task<IActionResult> ApproveRequest([FromBody] ApproveRequest model)
@@ -251,11 +278,14 @@ namespace CoverMate.Controller
                 return Unauthorized();
 
             var approverId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var principalName = User.Identity.Name;
+
             if (!int.TryParse(approverId, out int approverIdInt))
                 return BadRequest(new { message = "Invalid session." });
 
             var parameters = new { request_id = model.RequestId, approver_id = approverIdInt };
 
+            // ✅ 1. Update the request status
             DataTable dt = await _sharedClass.GetTableAsync("ApproveRequest", true, parameters);
 
             if (dt != null && dt.Rows.Count > 0)
@@ -263,6 +293,49 @@ namespace CoverMate.Controller
                 var row = dt.Rows[0];
                 int code = Convert.ToInt32(row["statuscode"]);
                 string msg = row["message"].ToString();
+
+                if (code == 200)
+                {
+                    try
+                    {
+                        // ✅ 2. Fetch sub email, course name, request date
+                        var detailParams = new { request_id = model.RequestId };
+                        DataTable detailDt = await _sharedClass.GetTableAsync("GetRequestAssignmentDetails", true, detailParams);
+
+                        if (detailDt != null && detailDt.Rows.Count > 0)
+                        {
+                            var drow = detailDt.Rows[0];
+
+                            string substituteName = drow["substitute_name"].ToString();
+                            string substituteEmail = drow["substitute_email"].ToString();
+                            string courseName = drow["course_name"].ToString();
+                            DateTime requestDate = Convert.ToDateTime(drow["request_date"]);
+
+                            // ✅ 3. Load the email template
+                            string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "PaymentApproval.html");
+                            string htmlBody = await System.IO.File.ReadAllTextAsync(templatePath);
+
+                            htmlBody = htmlBody
+                                .Replace("@SubstituteName", substituteName)
+                                .Replace("@RequestDate", requestDate.ToString("MMMM dd, yyyy"))
+                                .Replace("@CourseName", courseName)
+                                .Replace("@PrincipalName", principalName);
+
+                            string subject = $"CoverMate: Payment Approved for {substituteName}";
+                            string ccEmail = "covermateapp@gmail.com"; // for testing
+
+                            // ✅ 4. Send Email
+                            EmailSender.SendEmail(subject, htmlBody, substituteEmail, ccEmail, "");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Email sending failed: {ex.Message}");
+                        // Email failure should NOT block the approval action
+                    }
+
+                    return Ok(new { message = msg, statuscode = code });
+                }
 
                 return StatusCode(code, new { message = msg });
             }

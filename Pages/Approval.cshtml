@@ -39,8 +39,8 @@
                                                     <div class="col-2">Teacher</div>
                                                     <div class="col-2">Substitute</div>
                                                     <div class="col-3">Schedule</div>
-                                                    <div class="col-4">Follow-up Notes</div>
-                                                    <div class="col-1 text-center">Action</div>
+                                                    <div class="col-3">Follow-up Notes</div>
+                                                    <div class="col-2 text-center">Action</div>
                                                 </div>
                                             </div>
                                         `)
@@ -75,10 +75,10 @@
                                                            </div>
                                                            <small class="text-muted">${item.day}, ${item.time} — ${item.room}</small>
                                                         </div>
-                                                        <div class="col-4 small">
+                                                        <div class="col-3 small">
                                                             ${item.followup_notes}
                                                         </div>
-                                                        <div class="col-1 text-center">
+                                                        <div class="col-2 text-center">
                                                             <button class="btn btn-danger btn-sm" onclick="declineRequest(${item.request_id})">Decline</button>
                                                             <button class="btn btn-success btn-sm" onclick="approveRequest(${item.request_id})">Approve</button>
                                                         </div>
@@ -89,8 +89,8 @@
                     })
                     .catch(function (err) {
                          console.error(err)
-                         $('#approvalList').html('<div class="list-group-item text-danger">Failed to load approval list.</div>')
-                    })
+                         $('#approvalList').html('<div class="list-group-item text-center text-muted">No requests for approval.</div>')
+                    });
           }
 
           function approveRequest(requestId) {
