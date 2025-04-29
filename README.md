@@ -6,7 +6,7 @@
 <h3 align="center">Covermate</h3>
 
 <div align="center">
-  <img width="700px" height="200px" src="https://drive.google.com/uc?export=view&id=1Xr4UjVLajaLngtu_6IrUmez_xyaezNpf" alt="Covermate Logo">
+  <img width="700px" height="400px" src="https://drive.google.com/uc?export=view&id=1Xr4UjVLajaLngtu_6IrUmez_xyaezNpf" alt="Covermate Logo">
 </div>
 
 ---
